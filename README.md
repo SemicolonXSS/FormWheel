@@ -1,6 +1,7 @@
 # FormWheel
 
 ---KO---
+
 🎡 FormWheel
 
 브라우저에서 바로 쓰는 심플한 추첨 돌림판 웹앱입니다. Google forms에서 "형식은 [보고싶은거-이름-본인확인코드]으로 적어주셔야 합니다."라고 적으면 응답->요약에서 한번에 복사하여 이 돌림판에 복붙할 수 있다.
@@ -35,4 +36,42 @@ Vanilla HTML / CSS / JavaScript (프레임워크·빌드 도구 없음)
 📄 라이선스
 
 자유롭게 사용, 수정, 배포하셔도 됩니다.
+
 ---EN---
+
+🎡 FormWheel
+
+A simple raffle/spinner web app you can use right in your browser. It's a single HTML file with no server or build step, so it can be hosted directly on GitHub Pages or any static hosting.
+
+Tip: In your Google Form, add an instruction like "Please enter your answer in this format: [what you want-your name-your verification code]." Then in Forms → Responses → Summary, you can copy the responses in one go and paste them straight into this wheel.
+
+✨ Features
+Add entries: Enter multiple items at once using brackets ([Interstellar] [Dune] [Parasite]), or one per line without brackets
+Hidden notes: Using a - like [MovieA-note-1234] shows only MovieA on screen; after the winner popup closes, the rest (note-1234) appears small below the footer
+Per-item size: Set a size of 1–10 for each entry to change its slice size on the wheel and its odds of winning
+Spin settings: Adjust spin duration (seconds) and spin count (speed)
+Winner popup: A large popup with confetti/fireworks effects; you can delete the winning entry directly from the popup
+Popup style options: Choose between Gold / Bold Gradient / Minimal
+Clear all / Reset effects: Clear all entries, or reset spin and popup settings back to defaults
+Data storage: Automatically saved to the browser's localStorage, so it persists across refreshes (storage is per device/browser)
+🚀 Usage
+Use it online (GitHub Pages)
+In this repository, go to Settings → Pages and set main as the deployment branch
+Visit the generated URL (https://your-username.github.io/repo-name/)
+Use it locally
+
+Just double-click index.html to open it in your browser. No installation or build step required.
+
+🛠️ Tech Stack
+Vanilla HTML / CSS / JavaScript (no framework, no build tools)
+Data storage: browser localStorage
+📁 File Structure
+.
+├── index.html   # the entire app (markup + styles + logic)
+└── README.md
+⚠️ Notes
+Data is stored only in that specific browser. It won't appear on other devices or browsers, and clearing browser storage will delete it.
+There is no shared/server-side storage for multiple people to use together.
+📄 License
+
+Free to use, modify, and distribute
