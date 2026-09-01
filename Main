@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FormWheel</title>
+<style>
+  :root {
+    --bg: #1B1A2E;
+    --card: #242338;
+    --card-border: #34314F;
+    --ink: #F0EDE4;
+    --muted: #A8A3C0;
+    --gold: #E8B86D;
+    --gold-ink: #241A08;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 40px 20px 60px;
+  }
+  .wa-wrap { max-width: 880px; margin: 0 auto; }
+  .wa-brand { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+  .wa-title { font-family: Georgia, 'Iowan Old Style', serif; font-size: 30px; margin: 0; letter-spacing: -0.01em; }
+  .wa-brand-tag { font-size: 11px; color: var(--muted); border: 1px solid var(--card-border); border-radius: 999px; padding: 2px 9px; }
+  .wa-sub { color: var(--muted); font-size: 14px; margin: 10px 0 32px; line-height: 1.5; }
+  .wa-sub code { background: var(--card); border: 1px solid var(--card-border); border-radius: 4px; padding: 1px 5px; font-size: 12px; }
+  .wa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  @media (max-width: 720px) { .wa-grid { grid-template-columns: 1fr; } }
+  .wa-panel { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; padding: 22px; }
+  .wa-panel h2 { font-size: 13px; font-weight: 600; color: var(--muted); margin: 0; }
+  .wa-panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .wa-form-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .wa-input {
+    flex: 1; background: #1B1A2E; border: 1px solid var(--card-border); border-radius: 8px;
+    padding: 9px 12px; color: var(--ink); font-size: 14px; outline: none; font-family: inherit; width: 100%;
+  }
+  .wa-input:focus { border-color: var(--gold); }
+  .wa-input:disabled, select.wa-input:disabled { opacity: 0.5; cursor: not-allowed; }
+  select.wa-input { appearance: none; cursor: pointer; }
+  .wa-btn { border: none; border-radius: 8px; padding: 9px 16px; font-size: 14px; cursor: pointer; font-weight: 600; }
+  .wa-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .wa-btn-primary { background: var(--gold); color: var(--gold-ink); }
+  .wa-btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--card-border); }
+  .wa-hint { font-size: 11px; color: var(--muted); margin: 0 0 14px; }
+  .wa-list { display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; }
+  .wa-entry { display: flex; align-items: center; gap: 8px; background: #1B1A2E; border: 1px solid var(--card-border); border-radius: 8px; padding: 8px 10px; }
+  .wa-entry-swatch { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .wa-entry-text { flex: 1; font-size: 13px; line-height: 1.4; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wa-weight-input { flex: none !important; width: 52px; padding: 4px 6px !important; font-size: 12px !important; text-align: center; }
+  .wa-entry-actions { display: flex; gap: 4px; }
+  .wa-icon-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; padding: 4px 6px; border-radius: 6px; }
+  .wa-icon-btn:hover { background: #2D2B47; color: var(--ink); }
+  .wa-icon-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .wa-icon-btn:disabled:hover { background: none; color: var(--muted); }
+  .wa-empty { color: var(--muted); font-size: 13px; padding: 20px 0; text-align: center; }
+
+  .wa-settings-box { border: 1px solid var(--card-border); border-radius: 10px; padding: 12px; margin-bottom: 14px; }
+  .wa-settings-title { font-size: 11px; color: var(--muted); margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .wa-settings-row { display: flex; gap: 10px; }
+  .wa-settings-field { flex: 1; }
+  .wa-settings-field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .wa-settings-field .wa-input { padding: 7px 10px; font-size: 13px; }
+
+  .wa-wheel-col { display: flex; flex-direction: column; align-items: center; }
+  .wa-wheel-holder { position: relative; width: 320px; height: 320px; margin: 10px auto 26px; max-width: 100%; }
+  .wa-pointer {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent;
+    border-top: 20px solid var(--gold); z-index: 3; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
+  }
+  .wa-wheel {
+    width: 100%; height: 100%; border-radius: 50%; position: relative; overflow: hidden;
+    border: 6px solid var(--card); box-shadow: 0 0 0 2px var(--card-border), 0 12px 30px rgba(0,0,0,0.4);
+    will-change: transform;
+  }
+  .wa-wheel svg { display: block; width: 100%; height: 100%; }
+  .wa-spin-btn {
+    background: var(--gold); color: var(--gold-ink); border: none; border-radius: 999px;
+    padding: 13px 38px; font-size: 15px; font-weight: 700; cursor: pointer; letter-spacing: 0.01em;
+  }
+  .wa-spin-btn:disabled { opacity: 0.5; cursor: default; }
+  .wa-winner { margin-top: 16px; text-align: center; min-height: 24px; }
+  .wa-winner .wa-win-label { font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+  .wa-winner .wa-win-text { font-family: Georgia, 'Iowan Old Style', serif; font-size: 18px; color: var(--muted); }
+  .wa-footer { text-align: center; margin-top: 40px; font-size: 11px; color: var(--muted); }
+  .wa-footer-notes { text-align: center; margin-top: 6px; font-size: 10px; color: var(--muted); opacity: 0.6; line-height: 1.7; }
+
+  /* modal overlays (winner popup + confirm dialog) */
+  .wa-modal-overlay {
+    position: fixed; inset: 0; background: rgba(10,9,20,0.72);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; padding: 24px; animation: wa-fade-in 0.25s ease;
+  }
+  @keyframes wa-fade-in { from { opacity: 0; } to { opacity: 1; } }
+  .wa-modal-card {
+    position: relative; z-index: 1002; border-radius: 20px; padding: 36px 44px;
+    text-align: center; min-width: 260px; max-width: 90vw;
+    animation: wa-pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes wa-pop-in { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .wa-modal-label { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; margin-bottom: 10px; }
+  .wa-modal-text { font-family: Georgia, 'Iowan Old Style', serif; font-size: 32px; font-weight: 700; margin: 0 0 8px; word-break: break-word; line-height: 1.25; }
+  .wa-modal-note { font-size: 12px; opacity: 0.6; margin: 0 0 22px; }
+
+  .wa-modal-gold { background: var(--card); border: 2px solid var(--gold); color: var(--ink); box-shadow: 0 0 60px rgba(232,184,109,0.35), 0 20px 60px rgba(0,0,0,0.5); }
+  .wa-modal-gold .wa-modal-label { color: var(--gold); }
+
+  .wa-modal-bold { background: linear-gradient(135deg, #E8B86D, #D4A5C9 55%, #7E9CD8); color: #1B1A2E; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .wa-modal-bold .wa-modal-label { color: #1B1A2E; opacity: 0.6; }
+  .wa-modal-bold .wa-btn-primary { background: #1B1A2E; color: #F0EDE4; }
+
+  .wa-modal-minimal { background: var(--ink); color: var(--bg); box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+  .wa-modal-minimal .wa-modal-label { color: #6B6650; }
+  .wa-modal-minimal .wa-btn-primary { background: var(--bg); color: var(--ink); }
+
+  .wa-modal-gold .wa-btn-ghost { border-color: var(--card-border); color: var(--muted); }
+  .wa-modal-bold .wa-btn-ghost { border-color: rgba(27,26,46,0.35); color: #1B1A2E; }
+  .wa-modal-minimal .wa-btn-ghost { border-color: rgba(27,26,46,0.3); color: var(--bg); }
+  .wa-modal-actions { display: flex; gap: 10px; margin-top: 10px; }
+
+  .wa-confirm-card { padding: 26px 30px; }
+  .wa-confirm-title { font-size: 17px; font-weight: 700; margin: 0 0 8px; }
+  .wa-confirm-body { font-size: 13px; opacity: 0.75; margin: 0 0 20px; }
+  .wa-confirm-actions { display: flex; gap: 10px; }
+
+  canvas.wa-effect-canvas { position: fixed; inset: 0; z-index: 1001; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="wheel-app"></div>
+
+<script>
+(function () {
+  const PALETTE = ["#E8B86D", "#6B7A97", "#C97B63", "#8FA998", "#D4A5C9", "#7E9CD8", "#B7A16C", "#7FB0A6"];
+  const EFFECT_COLORS = PALETTE.concat(["#FFFFFF", "#E8B86D"]);
+  const STORAGE_KEY = "formwheel-entries";
+  const SETTINGS_KEY = "formwheel-settings";
+  const DEFAULT_SETTINGS = { duration: 5.6, rounds: 7, popupStyle: "gold", effect: "confetti" };
+  const DURATION_MIN = 2, DURATION_MAX = 15;
+  const ROUNDS_MIN = 2, ROUNDS_MAX = 20;
+  const WEIGHT_MIN = 1, WEIGHT_MAX = 10;
+
+  let settings = { ...DEFAULT_SETTINGS };
+  let entries = [];
+  let editingId = null;
+  let spinning = false;
+  let currentRotation = 0;
+  let lastWinner = null;
+
+  let winnerModalOpen = false;
+  let confirmClearOpen = false;
+  let effectStarted = false;
+  let effectCleanup = null;
+
+  const root = document.getElementById("wheel-app");
+
+  function uid() {
+    return "e" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
+  // Claude 아티팩트 안에서는 window.storage(영구 저장소)를 쓰고,
+  // 다른 곳에 호스팅해서 독립 웹사이트로 쓸 때는 자동으로 localStorage로 전환된다.
+  const hasArtifactStorage = typeof window !== "undefined" && window.storage && typeof window.storage.get === "function";
+
+  async function storageGet(key) {
+    if (hasArtifactStorage) {
+      try {
+        return await window.storage.get(key, false);
+      } catch (e) {
+        return null;
+      }
+    }
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? { value: raw } : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async function storageSet(key, value) {
+    if (hasArtifactStorage) {
+      try {
+        return await window.storage.set(key, value, false);
+      } catch (e) {
+        return null;
+      }
+    }
+    try {
+      localStorage.setItem(key, value);
+      return true;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function clamp(v, min, max) {
+    if (Number.isNaN(v)) return min;
+    return Math.min(max, Math.max(min, v));
+  }
+
+  async function loadSettings() {
+    try {
+      const res = await storageGet(SETTINGS_KEY);
+      if (res && res.value) {
+        const parsed = JSON.parse(res.value);
+        settings = { ...DEFAULT_SETTINGS, ...parsed };
+      }
+    } catch (e) {
+      settings = { ...DEFAULT_SETTINGS };
+    }
+  }
+
+  async function saveSettings() {
+    try {
+      await storageSet(SETTINGS_KEY, JSON.stringify(settings));
+    } catch (e) {
+      console.error("설정 저장 실패", e);
+    }
+  }
+
+  async function loadEntries() {
+    try {
+      const res = await storageGet(STORAGE_KEY);
+      if (res && res.value) entries = JSON.parse(res.value);
+    } catch (e) {
+      entries = [];
+    }
+  }
+
+  async function saveEntries() {
+    try {
+      await storageSet(STORAGE_KEY, JSON.stringify(entries));
+    } catch (e) {
+      console.error("저장 실패", e);
+    }
+  }
+
+  function updateEntry(id, label) {
+    const e = entries.find((x) => x.id === id);
+    if (!e || !label.trim()) return;
+    e.label = label.trim();
+    editingId = null;
+    saveEntries();
+    render();
+  }
+
+  function deleteEntry(id) {
+    entries = entries.filter((x) => x.id !== id);
+    if (entries.length === 0) lastWinner = null;
+    saveEntries();
+    render();
+  }
+
+  // --- 전체 삭제 (인앱 확인창 사용: 일부 환경에서 window.confirm이 동작하지 않아 교체) ---
+  function requestClearAll() {
+    if (entries.length === 0 || spinning) return;
+    confirmClearOpen = true;
+    render();
+  }
+
+  function cancelClearAll() {
+    confirmClearOpen = false;
+    render();
+  }
+
+  function confirmClearAll() {
+    entries = [];
+    lastWinner = null;
+    currentRotation = 0;
+    confirmClearOpen = false;
+    saveEntries();
+    render();
+  }
+
+  // --- 회전/팝업 효과 설정 초기화 ---
+  function resetEffectSettings() {
+    if (spinning) return;
+    settings = { ...DEFAULT_SETTINGS };
+    saveSettings();
+    render();
+  }
+
+  // --- 당첨 팝업에서 해당 항목 바로 삭제 ---
+  function deleteWinnerEntry() {
+    if (!lastWinner) return;
+    const id = lastWinner.id;
+    entries = entries.filter((x) => x.id !== id);
+    lastWinner = null;
+    winnerModalOpen = false;
+    stopEffect();
+    saveEntries();
+    render();
+  }
+
+  function updateDuration(raw) {
+    const v = clamp(parseFloat(raw), DURATION_MIN, DURATION_MAX);
+    settings.duration = Math.round(v * 10) / 10;
+    saveSettings();
+  }
+
+  function updateRounds(raw) {
+    const v = clamp(parseInt(raw, 10), ROUNDS_MIN, ROUNDS_MAX);
+    settings.rounds = v;
+    saveSettings();
+  }
+
+  function updatePopupStyle(val) {
+    settings.popupStyle = val;
+    saveSettings();
+  }
+
+  function updateEffect(val) {
+    settings.effect = val;
+    saveSettings();
+  }
+
+  function updateWeight(id, raw) {
+    const e = entries.find((x) => x.id === id);
+    if (!e) return;
+    e.weight = clamp(parseInt(raw, 10), WEIGHT_MIN, WEIGHT_MAX);
+    saveEntries();
+    render();
+  }
+
+  // 항목별 weight(크기)를 반영해 부채꼴 각도를 계산. 순서는 entries 배열 순서와 동일.
+  function computeSlices(list) {
+    const total = list.reduce((s, e) => s + (e.weight || 1), 0) || 1;
+    let acc = 0;
+    return list.map((e) => {
+      const w = e.weight || 1;
+      const sliceAngle = (w / total) * 360;
+      const start = acc;
+      const end = acc + sliceAngle;
+      acc = end;
+      return { entry: e, start, end, mid: (start + end) / 2, sliceAngle };
+    });
+  }
+
+  function spin() {
+    if (spinning || entries.length === 0) return;
+    spinning = true;
+
+    const spinBtn = document.getElementById("wa-spin-btn");
+    if (spinBtn) { spinBtn.disabled = true; spinBtn.textContent = "도는 중..."; }
+    const winnerBox = document.querySelector(".wa-winner");
+    if (winnerBox) winnerBox.innerHTML = "";
+
+    setInputsDisabled(true);
+
+    const n = entries.length;
+    const slices = computeSlices(entries);
+    const totalWeight = entries.reduce((s, e) => s + (e.weight || 1), 0) || 1;
+
+    let r = Math.random() * totalWeight;
+    let winnerIndex = n - 1;
+    let acc = 0;
+    for (let i = 0; i < n; i++) {
+      acc += entries[i].weight || 1;
+      if (r < acc) { winnerIndex = i; break; }
+    }
+
+    const slice = slices[winnerIndex];
+    const jitter = (Math.random() - 0.5) * slice.sliceAngle * 0.6;
+    const centerAngle = slice.mid + jitter;
+    const fullSpins = settings.rounds + Math.floor(Math.random() * 2);
+    const targetMod = (360 - centerAngle + 360) % 360;
+    const nextRotation = currentRotation - (currentRotation % 360) + fullSpins * 360 + targetMod;
+
+    const wheelEl = document.getElementById("wa-wheel-el");
+    wheelEl.style.transition = "transform " + settings.duration + "s cubic-bezier(0.16, 1, 0.3, 1)";
+    void wheelEl.offsetWidth;
+    wheelEl.style.transform = "rotate(" + nextRotation + "deg)";
+    currentRotation = nextRotation;
+
+    setTimeout(() => {
+      spinning = false;
+      lastWinner = entries[winnerIndex];
+      winnerModalOpen = true;
+      render();
+    }, settings.duration * 1000 + 100);
+  }
+
+  function closeWinnerModal() {
+    winnerModalOpen = false;
+    stopEffect();
+    render();
+  }
+
+  function setInputsDisabled(disabled) {
+    ["wa-duration-input", "wa-rounds-input", "wa-popup-style-select", "wa-effect-select", "wa-clear-btn", "wa-add-btn"].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.disabled = disabled;
+    });
+  }
+
+  // ---------- 폭죽 / 불꽃놀이 효과 ----------
+  function startEffect() {
+    if (settings.effect === "none") return;
+    const canvas = document.getElementById("wa-effect-canvas");
+    if (!canvas || !canvas.getContext) return;
+    const ctx = canvas.getContext("2d");
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    let rafId = null;
+    const startTime = performance.now();
+    const duration = 3400;
+
+    if (settings.effect === "confetti") {
+      const particles = [];
+      const count = 150;
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: -20 - Math.random() * canvas.height * 0.6,
+          w: 6 + Math.random() * 6,
+          h: 8 + Math.random() * 10,
+          color: EFFECT_COLORS[Math.floor(Math.random() * EFFECT_COLORS.length)],
+          vy: 2 + Math.random() * 3,
+          vx: -1.2 + Math.random() * 2.4,
+          rot: Math.random() * 360,
+          vr: -6 + Math.random() * 12,
+        });
+      }
+      function frame(now) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vr;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rot * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        });
+        if (now - startTime < duration) {
+          rafId = requestAnimationFrame(frame);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      rafId = requestAnimationFrame(frame);
+    } else if (settings.effect === "fireworks") {
+      let bursts = [];
+      let nextBurstAt = 0;
+
+      function spawnBurst() {
+        const bx = canvas.width * (0.18 + Math.random() * 0.64);
+        const by = canvas.height * (0.15 + Math.random() * 0.3);
+        const color = EFFECT_COLORS[Math.floor(Math.random() * EFFECT_COLORS.length)];
+        const parts = [];
+        const count = 40;
+        for (let i = 0; i < count; i++) {
+          const angle = (i / count) * Math.PI * 2;
+          const speed = 2 + Math.random() * 3;
+          parts.push({
+            x: bx, y: by,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 1,
+            color,
+          });
+        }
+        bursts.push(parts);
+      }
+
+      function frame(now) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (now >= nextBurstAt && now - startTime < duration - 700 && bursts.length < 6) {
+          spawnBurst();
+          nextBurstAt = now + 420 + Math.random() * 320;
+        }
+        bursts.forEach((parts) => {
+          parts.forEach((p) => {
+            p.vy += 0.035;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life -= 0.013;
+          });
+        });
+        bursts = bursts.map((parts) => parts.filter((p) => p.life > 0)).filter((parts) => parts.length > 0);
+
+        bursts.forEach((parts) => {
+          parts.forEach((p) => {
+            ctx.globalAlpha = Math.max(p.life, 0);
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+            ctx.fill();
+          });
+        });
+        ctx.globalAlpha = 1;
+
+        if (now - startTime < duration || bursts.length > 0) {
+          rafId = requestAnimationFrame(frame);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      rafId = requestAnimationFrame(frame);
+    }
+
+    effectCleanup = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", resize);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    };
+  }
+
+  function stopEffect() {
+    if (effectCleanup) {
+      effectCleanup();
+      effectCleanup = null;
+    }
+    effectStarted = false;
+  }
+
+  function buildWheelSvg(entries) {
+    const cx = 160, cy = 160, r = 150, textR = 100;
+    const n = entries.length;
+    if (n === 0) {
+      return '<svg viewBox="0 0 320 320" width="100%" height="100%"><circle cx="160" cy="160" r="150" fill="#2D2B47"/></svg>';
+    }
+    let shapes = "";
+    let labels = "";
+
+    if (n === 1) {
+      shapes = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + PALETTE[0] + '" />';
+      const label = escapeHtml(truncate(entries[0].label, 16));
+      labels =
+        '<text x="' + cx + '" y="' + (cy - textR) + '" transform="rotate(0 ' + cx + ' ' + cy + ')" ' +
+        'text-anchor="middle" font-size="12" font-weight="600" fill="#1B1A2E">' + label + '</text>';
+    } else {
+      const slices = computeSlices(entries);
+      slices.forEach((slice, i) => {
+        const a1 = slice.start;
+        const a2 = slice.end;
+        const a1r = (a1 - 90) * Math.PI / 180;
+        const a2r = (a2 - 90) * Math.PI / 180;
+        const x1 = (cx + r * Math.cos(a1r)).toFixed(2);
+        const y1 = (cy + r * Math.sin(a1r)).toFixed(2);
+        const x2 = (cx + r * Math.cos(a2r)).toFixed(2);
+        const y2 = (cy + r * Math.sin(a2r)).toFixed(2);
+        const largeArc = (a2 - a1) > 180 ? 1 : 0;
+        const color = PALETTE[i % PALETTE.length];
+        shapes +=
+          '<path d="M ' + cx + ',' + cy + ' L ' + x1 + ',' + y1 +
+          ' A ' + r + ',' + r + ' 0 ' + largeArc + ' 1 ' + x2 + ',' + y2 +
+          ' Z" fill="' + color + '" stroke="#1B1A2E" stroke-width="1"/>';
+
+        const label = escapeHtml(truncate(slice.entry.label, 16));
+        labels +=
+          '<text x="' + cx + '" y="' + (cy - textR) + '" transform="rotate(' + slice.mid + ' ' + cx + ' ' + cy + ')" ' +
+          'text-anchor="middle" font-size="12" font-weight="600" fill="#1B1A2E">' + label + '</text>';
+      });
+    }
+
+    const hub = '<circle cx="' + cx + '" cy="' + cy + '" r="11" fill="#E8B86D" stroke="#242338" stroke-width="4"/>';
+
+    return '<svg viewBox="0 0 320 320" width="100%" height="100%">' + shapes + labels + hub + '</svg>';
+  }
+
+  function parseInputToLabels(text) {
+    const bracketMatches = [...text.matchAll(/\[([^\[\]]*)\]/g)]
+      .map((m) => m[1].trim())
+      .filter((s) => s.length > 0);
+    if (bracketMatches.length > 0) return bracketMatches;
+    return text
+      .split("\n")
+      .map((l) => l.trim())
+      .filter((l) => l.length > 0);
+  }
+
+  // "어쩌고-저쩌고-1234" 형식이면 첫 "-" 앞부분만 화면에 보이는 라벨로 쓰고,
+  // 뒷부분은 note로 따로 저장해서 하단에 작게 표시한다.
+  function splitLabelAndNote(raw) {
+    const idx = raw.indexOf("-");
+    if (idx === -1) return { label: raw, note: null };
+    const label = raw.slice(0, idx).trim();
+    const note = raw.slice(idx + 1).trim();
+    return { label: label || raw, note: note || null };
+  }
+
+  // "어쩌고-저쩌고-1234" 형식이면 끝의 "-숫자" 부분을 분리해
+  // 화면에는 "어쩌고-저쩌고"만 보이게 하고 숫자는 코드로 따로 저장한다.
+  function parseLabelAndCode(raw) {
+    const m = raw.match(/^(.*)-(\d+)\s*$/);
+    if (m && m[1].trim().length > 0) {
+      return { label: m[1].trim(), code: m[2] };
+    }
+    return { label: raw, code: null };
+  }
+
+  function render() {
+    const n = entries.length;
+
+    root.innerHTML =
+      '<div class="wa-wrap">' +
+        '<div class="wa-brand"><h1 class="wa-title">FormWheel</h1><span class="wa-brand-tag">돌림판</span></div>' +
+        '<p class="wa-sub"><code>[어쩌고] [저쩌고]</code> 처럼 대괄호로 적으면 각각 개별 항목으로 들어가고, 대괄호 없이 줄바꿈만 해도 한 줄씩 항목으로 들어가요. <code>[어쩌고-저쩌고-1234]</code>처럼 "-"가 있으면 앞부분만 화면에 보이고, 나머지는 그 항목이 당첨된 뒤 팝업이 닫히면 하단에 작게 표시돼요.</p>' +
+        '<div class="wa-grid">' +
+          '<div class="wa-panel">' +
+            '<div class="wa-panel-header">' +
+              '<h2>항목 목록 (' + n + '개)</h2>' +
+              '<div style="display:flex;gap:4px;">' +
+                '<button class="wa-icon-btn" id="wa-reset-effects-btn" ' + (spinning ? "disabled" : "") + '>효과 모두 삭제하기</button>' +
+                '<button class="wa-icon-btn" id="wa-clear-btn" ' + (n === 0 || spinning ? "disabled" : "") + '>전체 삭제</button>' +
+              '</div>' +
+            '</div>' +
+            '<div id="wa-form-slot"></div>' +
+            '<div class="wa-settings-box">' +
+              '<p class="wa-settings-title">회전 설정</p>' +
+              '<div class="wa-settings-row">' +
+                '<div class="wa-settings-field">' +
+                  '<label for="wa-duration-input">회전 시간 (초)</label>' +
+                  '<input class="wa-input" id="wa-duration-input" type="number" min="' + DURATION_MIN + '" max="' + DURATION_MAX + '" step="0.1" value="' + settings.duration + '" ' + (spinning ? "disabled" : "") + '>' +
+                '</div>' +
+                '<div class="wa-settings-field">' +
+                  '<label for="wa-rounds-input">회전 수 (속도)</label>' +
+                  '<input class="wa-input" id="wa-rounds-input" type="number" min="' + ROUNDS_MIN + '" max="' + ROUNDS_MAX + '" step="1" value="' + settings.rounds + '" ' + (spinning ? "disabled" : "") + '>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="wa-settings-box">' +
+              '<p class="wa-settings-title">당첨 팝업 설정</p>' +
+              '<div class="wa-settings-row">' +
+                '<div class="wa-settings-field">' +
+                  '<label for="wa-popup-style-select">팝업 스타일</label>' +
+                  '<select class="wa-input" id="wa-popup-style-select" ' + (spinning ? "disabled" : "") + '>' +
+                    optionHtml("gold", settings.popupStyle, "골드 (기본)") +
+                    optionHtml("bold", settings.popupStyle, "화려한 그라디언트") +
+                    optionHtml("minimal", settings.popupStyle, "미니멀") +
+                  '</select>' +
+                '</div>' +
+                '<div class="wa-settings-field">' +
+                  '<label for="wa-effect-select">효과</label>' +
+                  '<select class="wa-input" id="wa-effect-select" ' + (spinning ? "disabled" : "") + '>' +
+                    optionHtml("confetti", settings.effect, "폭죽 (컨페티)") +
+                    optionHtml("fireworks", settings.effect, "불꽃놀이") +
+                    optionHtml("none", settings.effect, "효과 없음") +
+                  '</select>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="wa-list" id="wa-list">' +
+              (n === 0
+                ? '<div class="wa-empty">아직 항목이 없어요. 위에서 추가해보세요.</div>'
+                : entries.map((e, i) => entryRowHtml(e, i)).join("")) +
+            '</div>' +
+          '</div>' +
+          '<div class="wa-panel wa-wheel-col">' +
+            '<div class="wa-wheel-holder">' +
+              '<div class="wa-pointer"></div>' +
+              '<div class="wa-wheel" id="wa-wheel-el">' + buildWheelSvg(entries) + '</div>' +
+            '</div>' +
+            '<button class="wa-spin-btn" id="wa-spin-btn" ' + (spinning || n === 0 ? "disabled" : "") + '>' +
+              (spinning ? "도는 중..." : "돌리기") +
+            '</button>' +
+            '<div class="wa-winner">' +
+              (lastWinner && !spinning && !winnerModalOpen
+                ? '<div class="wa-win-label">최근 당첨</div><div class="wa-win-text">' + escapeHtml(lastWinner.label) + '</div>'
+                : '') +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="wa-footer">데이터는 이 앱에 안전하게 저장됩니다.</div>' +
+        buildNotesFooter() +
+      '</div>' +
+      (winnerModalOpen && lastWinner ? winnerModalHtml() : "") +
+      (confirmClearOpen ? confirmModalHtml() : "");
+
+    const wheelEl = document.getElementById("wa-wheel-el");
+    if (wheelEl && currentRotation !== 0) {
+      wheelEl.style.transition = "none";
+      wheelEl.style.transform = "rotate(" + currentRotation + "deg)";
+      requestAnimationFrame(() => { wheelEl.style.transition = ""; });
+    }
+
+    renderForm();
+
+    const spinBtn = document.getElementById("wa-spin-btn");
+    if (spinBtn) spinBtn.addEventListener("click", spin);
+
+    const clearBtn = document.getElementById("wa-clear-btn");
+    if (clearBtn) clearBtn.addEventListener("click", requestClearAll);
+
+    const resetEffectsBtn = document.getElementById("wa-reset-effects-btn");
+    if (resetEffectsBtn) resetEffectsBtn.addEventListener("click", resetEffectSettings);
+
+    const durationInput = document.getElementById("wa-duration-input");
+    if (durationInput) durationInput.addEventListener("change", (ev) => updateDuration(ev.target.value));
+
+    const roundsInput = document.getElementById("wa-rounds-input");
+    if (roundsInput) roundsInput.addEventListener("change", (ev) => updateRounds(ev.target.value));
+
+    const popupStyleSelect = document.getElementById("wa-popup-style-select");
+    if (popupStyleSelect) popupStyleSelect.addEventListener("change", (ev) => updatePopupStyle(ev.target.value));
+
+    const effectSelect = document.getElementById("wa-effect-select");
+    if (effectSelect) effectSelect.addEventListener("change", (ev) => updateEffect(ev.target.value));
+
+    entries.forEach((e) => {
+      const delBtn = document.getElementById("wa-del-" + e.id);
+      const editBtn = document.getElementById("wa-edit-" + e.id);
+      const weightInput = document.getElementById("wa-weight-" + e.id);
+      if (delBtn) delBtn.addEventListener("click", () => deleteEntry(e.id));
+      if (editBtn) editBtn.addEventListener("click", () => { editingId = e.id; render(); });
+      if (weightInput) weightInput.addEventListener("change", (ev) => updateWeight(e.id, ev.target.value));
+    });
+
+    if (editingId) {
+      const saveBtn = document.getElementById("wa-save-edit");
+      const cancelBtn = document.getElementById("wa-cancel-edit");
+      if (saveBtn) {
+        saveBtn.addEventListener("click", () => {
+          const label = document.getElementById("wa-edit-label").value;
+          updateEntry(editingId, label);
+        });
+      }
+      if (cancelBtn) cancelBtn.addEventListener("click", () => { editingId = null; render(); });
+    }
+
+    // 당첨 팝업
+    if (winnerModalOpen && lastWinner) {
+      const overlay = document.getElementById("wa-winner-overlay");
+      const closeBtn = document.getElementById("wa-winner-close");
+      const deleteBtn = document.getElementById("wa-winner-delete");
+      if (closeBtn) closeBtn.addEventListener("click", closeWinnerModal);
+      if (deleteBtn) deleteBtn.addEventListener("click", deleteWinnerEntry);
+      if (overlay) overlay.addEventListener("click", (ev) => { if (ev.target === overlay) closeWinnerModal(); });
+      if (!effectStarted) {
+        effectStarted = true;
+        startEffect();
+      }
+    } else {
+      effectStarted = false;
+    }
+
+    // 전체 삭제 확인 팝업
+    if (confirmClearOpen) {
+      const cOverlay = document.getElementById("wa-confirm-overlay");
+      const okBtn = document.getElementById("wa-confirm-ok");
+      const cancelBtn2 = document.getElementById("wa-confirm-cancel");
+      if (okBtn) okBtn.addEventListener("click", confirmClearAll);
+      if (cancelBtn2) cancelBtn2.addEventListener("click", cancelClearAll);
+      if (cOverlay) cOverlay.addEventListener("click", (ev) => { if (ev.target === cOverlay) cancelClearAll(); });
+    }
+  }
+
+  function optionHtml(value, current, label) {
+    return '<option value="' + value + '" ' + (value === current ? "selected" : "") + '>' + label + '</option>';
+  }
+
+  function buildNotesFooter() {
+    if (!lastWinner || !lastWinner.note || winnerModalOpen) return "";
+    return '<div class="wa-footer-notes">' + escapeHtml(lastWinner.note) + "</div>";
+  }
+
+  function winnerModalHtml() {
+    return (
+      '<div class="wa-modal-overlay" id="wa-winner-overlay">' +
+        '<canvas class="wa-effect-canvas" id="wa-effect-canvas"></canvas>' +
+        '<div class="wa-modal-card wa-modal-' + settings.popupStyle + '">' +
+          '<div class="wa-modal-label">당첨</div>' +
+          '<div class="wa-modal-text">' + escapeHtml(lastWinner.label) + '</div>' +
+          '<div class="wa-modal-actions">' +
+            '<button class="wa-btn wa-btn-ghost" id="wa-winner-delete" style="flex:1;">이 항목 삭제하기</button>' +
+            '<button class="wa-btn wa-btn-primary" id="wa-winner-close" style="flex:1;">확인</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function confirmModalHtml() {
+    return (
+      '<div class="wa-modal-overlay" id="wa-confirm-overlay">' +
+        '<div class="wa-modal-card wa-modal-minimal wa-confirm-card">' +
+          '<p class="wa-confirm-title">항목을 전부 삭제할까요?</p>' +
+          '<p class="wa-confirm-body">되돌릴 수 없어요.</p>' +
+          '<div class="wa-confirm-actions">' +
+            '<button class="wa-btn wa-btn-ghost" id="wa-confirm-cancel" style="flex:1;">취소</button>' +
+            '<button class="wa-btn wa-btn-primary" id="wa-confirm-ok" style="flex:1;">전체 삭제</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function renderForm() {
+    const slot = document.getElementById("wa-form-slot");
+    if (!slot) return;
+    slot.innerHTML =
+      '<div class="wa-form-row" style="flex-direction:column;">' +
+        '<textarea class="wa-input" id="wa-new-input" rows="2" placeholder="[어쩌고] [저쩌고]  또는  줄바꿈으로 한 줄씩" style="resize:vertical;" ' + (spinning ? "disabled" : "") + '></textarea>' +
+      '</div>' +
+      '<div class="wa-form-row">' +
+        '<button class="wa-btn wa-btn-primary" id="wa-add-btn" style="width:100%;" ' + (spinning ? "disabled" : "") + '>추가</button>' +
+      '</div>' +
+      '<p class="wa-hint">예: <code>[인터스텔라] [듄] [기생충]</code> 또는 한 줄에 하나씩 영화 제목만 적어도 돼요. 각 항목 옆 숫자로 크기(1~10)를 조절하면 돌림판 칸 크기와 당첨 확률이 달라져요.</p>';
+
+    const addBtn = document.getElementById("wa-add-btn");
+    const box = document.getElementById("wa-new-input");
+
+    function doAdd() {
+      const labels = parseInputToLabels(box.value);
+      if (labels.length === 0) return;
+      labels.forEach((raw) => {
+        const { label, note } = splitLabelAndNote(raw);
+        entries.push({ id: uid(), label: label, note: note, weight: 1 });
+      });
+      saveEntries();
+      box.value = "";
+      render();
+    }
+
+    addBtn.addEventListener("click", doAdd);
+    box.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter" && (ev.metaKey || ev.ctrlKey)) doAdd();
+    });
+  }
+
+  function entryRowHtml(e, i) {
+    if (editingId === e.id) {
+      return (
+        '<div class="wa-entry" style="flex-direction:column;align-items:stretch;gap:6px;">' +
+          '<input class="wa-input" id="wa-edit-label" value="' + escapeAttr(e.label) + '" />' +
+          '<div style="display:flex;gap:6px;">' +
+            '<button class="wa-btn wa-btn-primary" id="wa-save-edit" style="flex:1;">저장</button>' +
+            '<button class="wa-btn wa-btn-ghost" id="wa-cancel-edit" style="flex:1;">취소</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+    return (
+      '<div class="wa-entry">' +
+        '<span class="wa-entry-swatch" style="background:' + PALETTE[i % PALETTE.length] + '"></span>' +
+        '<span class="wa-entry-text">' + escapeHtml(e.label) + '</span>' +
+        '<input type="number" class="wa-input wa-weight-input" id="wa-weight-' + e.id + '" min="' + WEIGHT_MIN + '" max="' + WEIGHT_MAX + '" step="1" value="' + (e.weight || 1) + '" title="크기 (칸 비율, 클수록 당첨 확률 높음)" ' + (spinning ? "disabled" : "") + '>' +
+        '<span class="wa-entry-actions">' +
+          '<button class="wa-icon-btn" id="wa-edit-' + e.id + '" ' + (spinning ? "disabled" : "") + '>수정</button>' +
+          '<button class="wa-icon-btn" id="wa-del-' + e.id + '" ' + (spinning ? "disabled" : "") + '>삭제</button>' +
+        '</span>' +
+      '</div>'
+    );
+  }
+
+  function truncate(s, n) { return s.length > n ? s.slice(0, n - 1) + "…" : s; }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+  function escapeAttr(s) { return escapeHtml(s); }
+
+  async function init() {
+    await loadSettings();
+    await loadEntries();
+    render();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
