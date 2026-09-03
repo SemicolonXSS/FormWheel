@@ -4,6 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>FormWheel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Nanum+Pen+Script&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #1B1A2E;
@@ -22,8 +25,12 @@
     color: var(--ink);
     min-height: 100vh;
     padding: 40px 20px 60px;
+    transition: background 0.3s ease;
   }
   .wa-wrap { max-width: 880px; margin: 0 auto; }
+  .wa-authbar { display: flex; justify-content: flex-end; align-items: center; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .wa-authbar-email { font-size: 12px; color: var(--muted); margin-right: 2px; }
+  .wa-authbar .wa-icon-btn { border: 1px solid var(--card-border); }
   .wa-brand { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
   .wa-title { font-family: Georgia, 'Iowan Old Style', serif; font-size: 30px; margin: 0; letter-spacing: -0.01em; }
   .wa-brand-tag { font-size: 11px; color: var(--muted); border: 1px solid var(--card-border); border-radius: 999px; padding: 2px 9px; }
@@ -47,11 +54,16 @@
   .wa-btn-primary { background: var(--gold); color: var(--gold-ink); }
   .wa-btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--card-border); }
   .wa-hint { font-size: 11px; color: var(--muted); margin: 0 0 14px; }
+  .wa-lock-note { font-size: 11px; color: var(--muted); margin: 0 0 12px; line-height: 1.5; }
   .wa-list { display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; }
   .wa-entry { display: flex; align-items: center; gap: 8px; background: #1B1A2E; border: 1px solid var(--card-border); border-radius: 8px; padding: 8px 10px; }
-  .wa-entry-swatch { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
   .wa-entry-text { flex: 1; font-size: 13px; line-height: 1.4; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .wa-weight-input { flex: none !important; width: 52px; padding: 4px 6px !important; font-size: 12px !important; text-align: center; }
+  .wa-weight-input { flex: none !important; width: 46px; padding: 4px 6px !important; font-size: 12px !important; text-align: center; }
+  .wa-color-input {
+    flex: none !important; width: 30px !important; height: 30px; padding: 2px !important;
+    border-radius: 7px; cursor: pointer; background: none;
+  }
+  .wa-color-input:disabled { cursor: not-allowed; opacity: 0.45; }
   .wa-entry-actions { display: flex; gap: 4px; }
   .wa-icon-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; padding: 4px 6px; border-radius: 6px; }
   .wa-icon-btn:hover { background: #2D2B47; color: var(--ink); }
@@ -90,7 +102,7 @@
   .wa-footer { text-align: center; margin-top: 40px; font-size: 11px; color: var(--muted); }
   .wa-footer-notes { text-align: center; margin-top: 6px; font-size: 10px; color: var(--muted); opacity: 0.6; line-height: 1.7; }
 
-  /* modal overlays (winner popup + confirm dialog) */
+  /* modal overlays (winner popup + confirm dialog + auth) */
   .wa-modal-overlay {
     position: fixed; inset: 0; background: rgba(10,9,20,0.72);
     display: flex; align-items: center; justify-content: center;
@@ -118,15 +130,35 @@
   .wa-modal-minimal .wa-modal-label { color: #6B6650; }
   .wa-modal-minimal .wa-btn-primary { background: var(--bg); color: var(--ink); }
 
+  .wa-modal-neon { background: #0D0D17; border: 2px solid #39FF88; color: #EAFFF0; box-shadow: 0 0 14px #39FF88, 0 0 46px rgba(57,255,136,0.5), 0 20px 60px rgba(0,0,0,0.6); }
+  .wa-modal-neon .wa-modal-label { color: #39FF88; text-shadow: 0 0 8px rgba(57,255,136,0.8); }
+  .wa-modal-neon .wa-modal-text { text-shadow: 0 0 10px rgba(57,255,136,0.5); }
+  .wa-modal-neon .wa-btn-primary { background: #39FF88; color: #06120A; }
+  .wa-modal-neon .wa-btn-ghost { border-color: rgba(57,255,136,0.4); color: #9DF7C4; }
+
+  .wa-modal-retro { background: repeating-linear-gradient(45deg, #F4E9D8, #F4E9D8 10px, #EADFC8 10px, #EADFC8 20px); border: 3px double #7A5230; color: #4A2F16; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .wa-modal-retro .wa-modal-label { color: #7A5230; }
+  .wa-modal-retro .wa-btn-primary { background: #7A5230; color: #F4E9D8; }
+  .wa-modal-retro .wa-btn-ghost { border-color: rgba(122,82,48,0.4); color: #7A5230; }
+
   .wa-modal-gold .wa-btn-ghost { border-color: var(--card-border); color: var(--muted); }
   .wa-modal-bold .wa-btn-ghost { border-color: rgba(27,26,46,0.35); color: #1B1A2E; }
   .wa-modal-minimal .wa-btn-ghost { border-color: rgba(27,26,46,0.3); color: var(--bg); }
   .wa-modal-actions { display: flex; gap: 10px; margin-top: 10px; }
 
   .wa-confirm-card { padding: 26px 30px; }
-  .wa-confirm-title { font-size: 17px; font-weight: 700; margin: 0 0 8px; }
-  .wa-confirm-body { font-size: 13px; opacity: 0.75; margin: 0 0 20px; }
+  .wa-confirm-title { font-size: 17px; font-weight: 700; margin: 0 0 8px; text-align: left; }
+  .wa-confirm-body { font-size: 13px; opacity: 0.75; margin: 0 0 20px; text-align: left; }
   .wa-confirm-actions { display: flex; gap: 10px; }
+
+  .wa-auth-field { margin-bottom: 10px; text-align: left; }
+  .wa-auth-field label { display: block; font-size: 12px; opacity: 0.75; margin-bottom: 4px; }
+  .wa-auth-error { font-size: 12px; color: #C0392B; margin: 0 0 12px; text-align: left; }
+  .wa-auth-switch { font-size: 12px; margin-top: 14px; opacity: 0.75; }
+  .wa-auth-switch button { background: none; border: none; text-decoration: underline; cursor: pointer; font-size: 12px; color: inherit; padding: 0; }
+  .wa-captcha-row { display: flex; align-items: center; gap: 8px; margin: 4px 0 16px; padding: 10px 12px; border: 1px solid rgba(27,26,46,0.2); border-radius: 8px; }
+  .wa-captcha-row input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: #1B1A2E; }
+  .wa-captcha-row label { font-size: 13px; cursor: pointer; }
 
   canvas.wa-effect-canvas { position: fixed; inset: 0; z-index: 1001; pointer-events: none; }
 </style>
@@ -140,10 +172,30 @@
   const EFFECT_COLORS = PALETTE.concat(["#FFFFFF", "#E8B86D"]);
   const STORAGE_KEY = "formwheel-entries";
   const SETTINGS_KEY = "formwheel-settings";
-  const DEFAULT_SETTINGS = { duration: 5.6, rounds: 7, popupStyle: "gold", effect: "confetti" };
+  const USERS_KEY = "formwheel-users";
+  const SESSION_KEY = "formwheel-session";
+  const PRESETS_KEY = "formwheel-presets";
+  const DEFAULT_SETTINGS = {
+    duration: 5.6, rounds: 7, popupStyle: "gold", popupFont: "default", effect: "confetti",
+    background: "#1B1A2E", backgroundType: "color", backgroundImage: null,
+    hubType: "color", hubColor: "#E8B86D", hubImage: null,
+    hubShape: "circle", wheelShape: "circle",
+    wheelBorderColor: "#242338", wheelBorderWidth: 6,
+    glitchColors: ["#39FF14", "#FF2079", "#00EAFF", "#FFFFFF"]
+  };
+  const POPUP_FONTS = {
+    default: "Georgia, 'Iowan Old Style', serif",
+    sans: "'Poppins', ui-sans-serif, -apple-system, sans-serif",
+    blackhan: "'Black Han Sans', ui-sans-serif, sans-serif",
+    dohyeon: "'Do Hyeon', ui-sans-serif, sans-serif",
+    pen: "'Nanum Pen Script', cursive",
+    mono: "'Courier New', ui-monospace, monospace",
+  };
   const DURATION_MIN = 2, DURATION_MAX = 15;
   const ROUNDS_MIN = 2, ROUNDS_MAX = 20;
   const WEIGHT_MIN = 1, WEIGHT_MAX = 10;
+  const BORDER_WIDTH_MIN = 0, BORDER_WIDTH_MAX = 20;
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   let settings = { ...DEFAULT_SETTINGS };
   let entries = [];
@@ -151,11 +203,23 @@
   let spinning = false;
   let currentRotation = 0;
   let lastWinner = null;
+  let copyFeedback = false;
 
   let winnerModalOpen = false;
   let confirmClearOpen = false;
   let effectStarted = false;
   let effectCleanup = null;
+
+  // --- 계정 관련 상태 ---
+  let users = [];        // { id, email, passHash, verified }[]
+  let currentUser = null; // { email } | null
+  let authView = null;    // null | "login" | "signup"
+  let authBusy = false;
+  let authForm = { email: "", password: "", confirm: "", notRobot: false, error: "" };
+
+  // --- 저장된 돌림판(프리셋) 상태: { [email]: [{id,name,createdAt,entries,settings}] } ---
+  let presetsStore = {};
+  let presetNameInputValue = "";
 
   const root = document.getElementById("wheel-app");
 
@@ -163,36 +227,40 @@
     return "e" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
   }
 
+  function resetAuthForm() {
+    authForm = { email: "", password: "", confirm: "", notRobot: false, error: "" };
+  }
+
   // Claude 아티팩트 안에서는 window.storage(영구 저장소)를 쓰고,
   // 다른 곳에 호스팅해서 독립 웹사이트로 쓸 때는 자동으로 localStorage로 전환된다.
   const hasArtifactStorage = typeof window !== "undefined" && window.storage && typeof window.storage.get === "function";
 
-  async function storageGet(key) {
+  async function storageGet(key, shared) {
     if (hasArtifactStorage) {
       try {
-        return await window.storage.get(key, false);
+        return await window.storage.get(key, !!shared);
       } catch (e) {
         return null;
       }
     }
     try {
-      const raw = localStorage.getItem(key);
+      const raw = localStorage.getItem((shared ? "shared:" : "") + key);
       return raw ? { value: raw } : null;
     } catch (e) {
       return null;
     }
   }
 
-  async function storageSet(key, value) {
+  async function storageSet(key, value, shared) {
     if (hasArtifactStorage) {
       try {
-        return await window.storage.set(key, value, false);
+        return await window.storage.set(key, value, !!shared);
       } catch (e) {
         return null;
       }
     }
     try {
-      localStorage.setItem(key, value);
+      localStorage.setItem((shared ? "shared:" : "") + key, value);
       return true;
     } catch (e) {
       return null;
@@ -206,7 +274,7 @@
 
   async function loadSettings() {
     try {
-      const res = await storageGet(SETTINGS_KEY);
+      const res = await storageGet(SETTINGS_KEY, false);
       if (res && res.value) {
         const parsed = JSON.parse(res.value);
         settings = { ...DEFAULT_SETTINGS, ...parsed };
@@ -218,7 +286,7 @@
 
   async function saveSettings() {
     try {
-      await storageSet(SETTINGS_KEY, JSON.stringify(settings));
+      await storageSet(SETTINGS_KEY, JSON.stringify(settings), false);
     } catch (e) {
       console.error("설정 저장 실패", e);
     }
@@ -226,7 +294,7 @@
 
   async function loadEntries() {
     try {
-      const res = await storageGet(STORAGE_KEY);
+      const res = await storageGet(STORAGE_KEY, false);
       if (res && res.value) entries = JSON.parse(res.value);
     } catch (e) {
       entries = [];
@@ -235,10 +303,198 @@
 
   async function saveEntries() {
     try {
-      await storageSet(STORAGE_KEY, JSON.stringify(entries));
+      await storageSet(STORAGE_KEY, JSON.stringify(entries), false);
     } catch (e) {
       console.error("저장 실패", e);
     }
+  }
+
+  // --- 계정 저장/불러오기 (사용자 목록/인증대기는 공용 저장소 사용) ---
+  async function loadUsers() {
+    try {
+      const res = await storageGet(USERS_KEY, true);
+      if (res && res.value) users = JSON.parse(res.value);
+    } catch (e) {
+      users = [];
+    }
+  }
+
+  async function saveUsers() {
+    try {
+      await storageSet(USERS_KEY, JSON.stringify(users), true);
+    } catch (e) {
+      console.error("사용자 저장 실패", e);
+    }
+  }
+
+  async function loadSession() {
+    try {
+      const res = await storageGet(SESSION_KEY, false);
+      if (res && res.value) {
+        const parsed = JSON.parse(res.value);
+        if (parsed && parsed.email) currentUser = { email: parsed.email };
+      }
+    } catch (e) {
+      currentUser = null;
+    }
+  }
+
+  async function saveSession() {
+    try {
+      await storageSet(SESSION_KEY, JSON.stringify({ email: currentUser ? currentUser.email : null }), false);
+    } catch (e) {
+      console.error("세션 저장 실패", e);
+    }
+  }
+
+  // --- 저장된 돌림판(프리셋): 계정별 목록을 공용 저장소에 보관 ---
+  async function loadPresetsStore() {
+    try {
+      const res = await storageGet(PRESETS_KEY, true);
+      if (res && res.value) presetsStore = JSON.parse(res.value);
+    } catch (e) {
+      presetsStore = {};
+    }
+  }
+
+  async function savePresetsStore() {
+    try {
+      await storageSet(PRESETS_KEY, JSON.stringify(presetsStore), true);
+    } catch (e) {
+      console.error("프리셋 저장 실패", e);
+    }
+  }
+
+  function getUserPresets() {
+    if (!currentUser) return [];
+    return presetsStore[currentUser.email] || [];
+  }
+
+  // 프리셋에는 "꾸미기" 관련 값만 담는다. 회전 시간/횟수, 팝업 스타일, 효과는
+  // 프리셋과 무관하게 유지되는 개인 설정으로 취급한다.
+  function extractStyleSettings(s) {
+    return {
+      background: s.background,
+      backgroundType: s.backgroundType,
+      backgroundImage: s.backgroundImage,
+      hubType: s.hubType,
+      hubColor: s.hubColor,
+      hubImage: s.hubImage,
+      hubShape: s.hubShape,
+      wheelShape: s.wheelShape,
+      wheelBorderColor: s.wheelBorderColor,
+      wheelBorderWidth: s.wheelBorderWidth,
+    };
+  }
+
+  async function saveCurrentPreset() {
+    if (!currentUser || entries.length === 0) return;
+    const name = presetNameInputValue.trim();
+    if (!name) return;
+    const list = presetsStore[currentUser.email] || (presetsStore[currentUser.email] = []);
+    list.unshift({
+      id: uid(),
+      name,
+      createdAt: Date.now(),
+      entries: JSON.parse(JSON.stringify(entries)),
+      settings: JSON.parse(JSON.stringify(extractStyleSettings(settings))),
+    });
+    if (list.length > 20) list.length = 20;
+    await savePresetsStore();
+    presetNameInputValue = "";
+    render();
+  }
+
+  function loadPreset(id) {
+    if (!currentUser || spinning) return;
+    const list = presetsStore[currentUser.email] || [];
+    const preset = list.find((p) => p.id === id);
+    if (!preset) return;
+    entries = JSON.parse(JSON.stringify(preset.entries));
+    const ps = preset.settings || {};
+    settings = {
+      ...settings,
+      background: ps.background !== undefined ? ps.background : settings.background,
+      backgroundType: ps.backgroundType !== undefined ? ps.backgroundType : settings.backgroundType,
+      backgroundImage: ps.backgroundImage !== undefined ? ps.backgroundImage : settings.backgroundImage,
+      hubType: ps.hubType !== undefined ? ps.hubType : settings.hubType,
+      hubColor: ps.hubColor !== undefined ? ps.hubColor : settings.hubColor,
+      hubImage: ps.hubImage !== undefined ? ps.hubImage : settings.hubImage,
+      hubShape: ps.hubShape !== undefined ? ps.hubShape : settings.hubShape,
+      wheelShape: ps.wheelShape !== undefined ? ps.wheelShape : settings.wheelShape,
+      wheelBorderColor: ps.wheelBorderColor !== undefined ? ps.wheelBorderColor : settings.wheelBorderColor,
+      wheelBorderWidth: ps.wheelBorderWidth !== undefined ? ps.wheelBorderWidth : settings.wheelBorderWidth,
+    };
+    currentRotation = 0;
+    lastWinner = null;
+    editingId = null;
+    saveEntries();
+    saveSettings();
+    render();
+  }
+
+  async function deletePreset(id) {
+    if (!currentUser) return;
+    const list = presetsStore[currentUser.email] || [];
+    presetsStore[currentUser.email] = list.filter((p) => p.id !== id);
+    await savePresetsStore();
+    render();
+  }
+
+  async function hashPassword(pw) {
+    const enc = new TextEncoder().encode("formwheel-salt-v1:" + pw);
+    const buf = await crypto.subtle.digest("SHA-256", enc);
+    return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  // --- 회원가입: 정보 입력 + "로봇이 아닙니다" 체크 확인 ---
+  async function submitSignup() {
+    authForm.error = "";
+    const email = authForm.email.trim().toLowerCase();
+    const pw = authForm.password;
+    const confirmPw = authForm.confirm;
+    if (!EMAIL_RE.test(email)) { authForm.error = "올바른 이메일 형식이 아니에요."; render(); return; }
+    if (pw.length < 6) { authForm.error = "비밀번호는 6자 이상이어야 해요."; render(); return; }
+    if (pw !== confirmPw) { authForm.error = "비밀번호가 일치하지 않아요."; render(); return; }
+    if (!authForm.notRobot) { authForm.error = "로봇이 아님을 확인해주세요."; render(); return; }
+    if (users.find((u) => u.email === email && u.verified)) { authForm.error = "이미 가입된 이메일이에요."; render(); return; }
+
+    authBusy = true;
+    render();
+    const passHash = await hashPassword(pw);
+    users = users.filter((u) => u.email !== email);
+    users.push({ id: uid(), email, passHash, verified: true });
+    await saveUsers();
+    authBusy = false;
+    currentUser = { email };
+    await saveSession();
+    authView = null;
+    resetAuthForm();
+    render();
+  }
+
+  async function submitLogin() {
+    authForm.error = "";
+    const email = authForm.email.trim().toLowerCase();
+    const pw = authForm.password;
+    const user = users.find((u) => u.email === email && u.verified);
+    if (!user) { authForm.error = "가입되지 않은 이메일이에요."; render(); return; }
+    authBusy = true;
+    render();
+    const passHash = await hashPassword(pw);
+    authBusy = false;
+    if (passHash !== user.passHash) { authForm.error = "비밀번호가 올바르지 않아요."; render(); return; }
+    currentUser = { email };
+    await saveSession();
+    authView = null;
+    resetAuthForm();
+    render();
+  }
+
+  function logout() {
+    currentUser = null;
+    saveSession();
+    render();
   }
 
   function updateEntry(id, label) {
@@ -255,6 +511,50 @@
     if (entries.length === 0) lastWinner = null;
     saveEntries();
     render();
+  }
+
+  // --- 항목 모두 복사: [항목-숫자] 문법을 그대로 써서 나중에 다시 붙여넣어도 가중치가 유지되게 구성 ---
+  function entriesToText() {
+    return entries
+      .map((e) => ((e.weight && e.weight !== 1) ? (e.label + "-" + e.weight) : e.label))
+      .join("\n");
+  }
+
+  function fallbackCopy(text) {
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async function copyAllEntries() {
+    if (entries.length === 0) return;
+    const text = entriesToText();
+    let ok = false;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+        ok = true;
+      }
+    } catch (e) {
+      ok = false;
+    }
+    if (!ok) ok = fallbackCopy(text);
+    if (ok) {
+      copyFeedback = true;
+      render();
+      setTimeout(() => { copyFeedback = false; render(); }, 1500);
+    }
   }
 
   // --- 전체 삭제 (인앱 확인창 사용: 일부 환경에서 window.confirm이 동작하지 않아 교체) ---
@@ -278,10 +578,13 @@
     render();
   }
 
-  // --- 회전/팝업 효과 설정 초기화 ---
+  // --- 회전/팝업 효과 설정만 초기화 (배경·색상 커스텀은 유지) ---
   function resetEffectSettings() {
     if (spinning) return;
-    settings = { ...DEFAULT_SETTINGS };
+    settings.duration = DEFAULT_SETTINGS.duration;
+    settings.rounds = DEFAULT_SETTINGS.rounds;
+    settings.popupStyle = DEFAULT_SETTINGS.popupStyle;
+    settings.effect = DEFAULT_SETTINGS.effect;
     saveSettings();
     render();
   }
@@ -315,8 +618,23 @@
     saveSettings();
   }
 
+  function updatePopupFont(val) {
+    settings.popupFont = val;
+    saveSettings();
+    render();
+  }
+
   function updateEffect(val) {
+    if (val === "glitch" && !currentUser) return; // 로그인 필요
     settings.effect = val;
+    saveSettings();
+    render();
+  }
+
+  function updateGlitchColor(index, val) {
+    if (!currentUser) return;
+    if (!Array.isArray(settings.glitchColors)) settings.glitchColors = DEFAULT_SETTINGS.glitchColors.slice();
+    settings.glitchColors[index] = val;
     saveSettings();
   }
 
@@ -324,6 +642,137 @@
     const e = entries.find((x) => x.id === id);
     if (!e) return;
     e.weight = clamp(parseInt(raw, 10), WEIGHT_MIN, WEIGHT_MAX);
+    saveEntries();
+    render();
+  }
+
+  // --- 로그인한 사용자만 배경/항목 색상/중앙 원 색상을 바꿀 수 있음 ---
+  function updateBackground(val) {
+    if (!currentUser || spinning) return;
+    settings.background = val;
+    saveSettings();
+    render();
+  }
+
+  function updateBackgroundType(val) {
+    if (!currentUser || spinning) return;
+    settings.backgroundType = val;
+    saveSettings();
+    render();
+  }
+
+  function updateBackgroundImage(file) {
+    if (!currentUser || spinning || !file) return;
+    const reader = new FileReader();
+    reader.onload = function (ev) {
+      const img = new Image();
+      img.onload = function () {
+        const maxW = 1600;
+        const scale = Math.min(1, maxW / img.width);
+        const w = Math.max(1, Math.round(img.width * scale));
+        const h = Math.max(1, Math.round(img.height * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+        settings.backgroundImage = canvas.toDataURL("image/jpeg", 0.82);
+        saveSettings();
+        render();
+      };
+      img.onerror = function () { /* 이미지를 읽지 못하면 조용히 무시 */ };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeBackgroundImage() {
+    if (!currentUser) return;
+    settings.backgroundImage = null;
+    saveSettings();
+    render();
+  }
+
+  function updateHubColor(val) {
+    if (!currentUser || spinning) return;
+    settings.hubColor = val;
+    saveSettings();
+    render();
+  }
+
+  function updateHubType(val) {
+    if (!currentUser || spinning) return;
+    settings.hubType = val;
+    saveSettings();
+    render();
+  }
+
+  function updateHubImage(file) {
+    if (!currentUser || spinning || !file) return;
+    const reader = new FileReader();
+    reader.onload = function (ev) {
+      const img = new Image();
+      img.onload = function () {
+        const size = 120;
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d");
+        const s = Math.min(img.width, img.height);
+        const sx = (img.width - s) / 2;
+        const sy = (img.height - s) / 2;
+        ctx.drawImage(img, sx, sy, s, s, 0, 0, size, size);
+        settings.hubImage = canvas.toDataURL("image/jpeg", 0.85);
+        saveSettings();
+        render();
+      };
+      img.onerror = function () { /* 이미지를 읽지 못하면 조용히 무시 */ };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeHubImage() {
+    if (!currentUser) return;
+    settings.hubImage = null;
+    saveSettings();
+    render();
+  }
+
+  function updateWheelBorderColor(val) {
+    if (!currentUser || spinning) return;
+    settings.wheelBorderColor = val;
+    saveSettings();
+    render();
+  }
+
+  function updateWheelBorderWidth(raw) {
+    if (!currentUser || spinning) return;
+    const v = clamp(parseInt(raw, 10), BORDER_WIDTH_MIN, BORDER_WIDTH_MAX);
+    settings.wheelBorderWidth = v;
+    saveSettings();
+    render();
+  }
+
+  function updateHubShape(val) {
+    if (!currentUser || spinning) return;
+    settings.hubShape = val;
+    saveSettings();
+    render();
+  }
+
+  function updateWheelShape(val) {
+    if (!currentUser || spinning) return;
+    settings.wheelShape = val;
+    saveSettings();
+    render();
+  }
+
+  function updateEntryColor(id, val) {
+    if (!currentUser) return;
+    const e = entries.find((x) => x.id === id);
+    if (!e) return;
+    e.color = val;
     saveEntries();
     render();
   }
@@ -393,7 +842,7 @@
   }
 
   function setInputsDisabled(disabled) {
-    ["wa-duration-input", "wa-rounds-input", "wa-popup-style-select", "wa-effect-select", "wa-clear-btn", "wa-add-btn"].forEach((id) => {
+    ["wa-duration-input", "wa-rounds-input", "wa-popup-style-select", "wa-popup-font-select", "wa-effect-select", "wa-clear-btn", "wa-add-btn", "wa-bg-type-select", "wa-bg-input", "wa-bg-image-input", "wa-border-color-input", "wa-border-width-input", "wa-wheel-shape-select", "wa-hub-input", "wa-hub-type-select", "wa-hub-shape-select", "wa-hub-image-input", "wa-glitch-color-0", "wa-glitch-color-1", "wa-glitch-color-2", "wa-glitch-color-3", "wa-preset-name-input", "wa-preset-save-btn"].forEach((id) => {
       const el = document.getElementById(id);
       if (el) el.disabled = disabled;
     });
@@ -402,6 +851,7 @@
   // ---------- 폭죽 / 불꽃놀이 효과 ----------
   function startEffect() {
     if (settings.effect === "none") return;
+    if (settings.effect === "glitch" && !currentUser) return; // 로그인 없이 저장된 값이어도 재생하지 않음
     const canvas = document.getElementById("wa-effect-canvas");
     if (!canvas || !canvas.getContext) return;
     const ctx = canvas.getContext("2d");
@@ -511,6 +961,97 @@
         }
       }
       rafId = requestAnimationFrame(frame);
+    } else if (settings.effect === "sparkle") {
+      const particles = [];
+      const count = 60;
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: 12 + Math.random() * 16,
+          tw: Math.random() * Math.PI * 2,
+          vx: -0.3 + Math.random() * 0.6,
+          vy: -0.3 + Math.random() * 0.6,
+        });
+      }
+      function frame(now) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const life = Math.max(0, 1 - (now - startTime) / duration);
+        particles.forEach((p) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          const alpha = Math.max(0, Math.sin(now / 160 + p.tw)) * life;
+          ctx.globalAlpha = alpha;
+          ctx.font = p.size + "px serif";
+          ctx.fillText("✨", p.x, p.y);
+        });
+        ctx.globalAlpha = 1;
+        if (now - startTime < duration) {
+          rafId = requestAnimationFrame(frame);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      rafId = requestAnimationFrame(frame);
+    } else if (settings.effect === "hearts") {
+      const hearts = ["❤️", "💛", "💚", "💙", "💜"];
+      const particles = [];
+      const count = 70;
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: canvas.height + 20 + Math.random() * canvas.height * 0.4,
+          size: 16 + Math.random() * 18,
+          char: hearts[Math.floor(Math.random() * hearts.length)],
+          vy: -(1.4 + Math.random() * 2),
+          swayPhase: Math.random() * Math.PI * 2,
+          swayAmp: 10 + Math.random() * 20,
+        });
+      }
+      function frame(now) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p) => {
+          p.y += p.vy;
+          const life = Math.max(0, Math.min(1, (canvas.height - p.y) / canvas.height));
+          ctx.globalAlpha = Math.max(0, 1 - (now - startTime) / duration + 0.3);
+          ctx.font = p.size + "px serif";
+          ctx.fillText(p.char, p.x + Math.sin(now / 400 + p.swayPhase) * p.swayAmp, p.y);
+        });
+        ctx.globalAlpha = 1;
+        if (now - startTime < duration) {
+          rafId = requestAnimationFrame(frame);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      rafId = requestAnimationFrame(frame);
+    } else if (settings.effect === "glitch") {
+      const glitchColors = (Array.isArray(settings.glitchColors) && settings.glitchColors.length)
+        ? settings.glitchColors
+        : DEFAULT_SETTINGS.glitchColors;
+      function frame(now) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.globalAlpha = 0.06;
+        ctx.fillStyle = "#000000";
+        for (let y = 0; y < canvas.height; y += 4) ctx.fillRect(0, y, canvas.width, 2);
+        const barCount = 5 + Math.floor(Math.random() * 7);
+        for (let i = 0; i < barCount; i++) {
+          const y = Math.random() * canvas.height;
+          const h = 4 + Math.random() * 34;
+          const xOffset = (Math.random() - 0.5) * 70;
+          const color = glitchColors[Math.floor(Math.random() * glitchColors.length)];
+          ctx.globalAlpha = 0.45 + Math.random() * 0.45;
+          ctx.fillStyle = color;
+          ctx.fillRect(xOffset, y, canvas.width, h);
+        }
+        ctx.globalAlpha = 1;
+        if (now - startTime < duration) {
+          rafId = requestAnimationFrame(frame);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      rafId = requestAnimationFrame(frame);
     }
 
     effectCleanup = () => {
@@ -528,6 +1069,88 @@
     effectStarted = false;
   }
 
+  // 다각형 모양 정의: 정n각형의 변 수와 회전각(위쪽 꼭짓점 기준)
+  const POLY_SHAPES = {
+    square: { sides: 4, rotation: 45 },
+    triangle: { sides: 3, rotation: 0 },
+    diamond: { sides: 4, rotation: 0 },
+    pentagon: { sides: 5, rotation: 0 },
+    hexagon: { sides: 6, rotation: 0 },
+  };
+
+  function polygonPointsSvg(cx, cy, r, shape) {
+    const def = POLY_SHAPES[shape] || POLY_SHAPES.square;
+    const pts = [];
+    for (let i = 0; i < def.sides; i++) {
+      const angle = (def.rotation + (i * 360) / def.sides - 90) * Math.PI / 180;
+      pts.push((cx + r * Math.cos(angle)).toFixed(2) + "," + (cy + r * Math.sin(angle)).toFixed(2));
+    }
+    return pts.join(" ");
+  }
+
+  // 돌림판 바깥 테두리용 CSS clip-path (퍼센트 좌표계, 중심 50% 반지름 50%)
+  function polygonClipPathCss(shape) {
+    const def = POLY_SHAPES[shape] || POLY_SHAPES.square;
+    const pts = [];
+    for (let i = 0; i < def.sides; i++) {
+      const angle = (def.rotation + (i * 360) / def.sides - 90) * Math.PI / 180;
+      const x = (50 + 50 * Math.cos(angle)).toFixed(2);
+      const y = (50 + 50 * Math.sin(angle)).toFixed(2);
+      pts.push(x + "% " + y + "%");
+    }
+    return "polygon(" + pts.join(", ") + ")";
+  }
+
+  function wheelShapeStyle(shape) {
+    if (shape === "square") return { borderRadius: "18px", clipPath: "none" };
+    if (shape && POLY_SHAPES[shape]) return { borderRadius: "0", clipPath: polygonClipPathCss(shape) };
+    return { borderRadius: "50%", clipPath: "none" };
+  }
+
+  // 중앙 원 스타일: 단색 / 레인보우(부채꼴로 무지개 근사) / 사진(모양대로 클립) / 없음
+  // + 모양: 원 / 사각형 / 삼각형 / 다이아몬드 / 오각형 / 육각형 (로그인 필요)
+  function buildHubMarkup(cx, cy, r) {
+    const type = settings.hubType || "color";
+    if (type === "none") return "";
+    const shape = settings.hubShape || "circle";
+    const isCircle = shape === "circle" || !POLY_SHAPES[shape];
+    const shapeTag = isCircle
+      ? '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '"'
+      : '<polygon points="' + polygonPointsSvg(cx, cy, r, shape) + '"';
+    const outline = shapeTag + ' fill="none" stroke="#242338" stroke-width="4"/>';
+
+    if (type === "image" && settings.hubImage) {
+      return (
+        '<defs><clipPath id="wa-hub-clip">' + shapeTag + '/></clipPath></defs>' +
+        '<image href="' + settings.hubImage + '" x="' + (cx - r) + '" y="' + (cy - r) + '" width="' + (r * 2) + '" height="' + (r * 2) + '" clip-path="url(#wa-hub-clip)" preserveAspectRatio="xMidYMid slice"/>' +
+        outline
+      );
+    }
+    if (type === "rainbow") {
+      const segs = 24;
+      let arcs = "";
+      for (let i = 0; i < segs; i++) {
+        const a1 = (i / segs) * 360;
+        const a2 = ((i + 1) / segs) * 360;
+        const a1r = (a1 - 90) * Math.PI / 180;
+        const a2r = (a2 - 90) * Math.PI / 180;
+        const x1 = (cx + r * Math.cos(a1r)).toFixed(2);
+        const y1 = (cy + r * Math.sin(a1r)).toFixed(2);
+        const x2 = (cx + r * Math.cos(a2r)).toFixed(2);
+        const y2 = (cy + r * Math.sin(a2r)).toFixed(2);
+        const hue = Math.round((i / segs) * 360);
+        arcs += '<path d="M ' + cx + ',' + cy + ' L ' + x1 + ',' + y1 + ' A ' + r + ',' + r + ' 0 0 1 ' + x2 + ',' + y2 + ' Z" fill="hsl(' + hue + ',85%,60%)"/>';
+      }
+      return (
+        '<defs><clipPath id="wa-hub-clip">' + shapeTag + '/></clipPath></defs>' +
+        '<g clip-path="url(#wa-hub-clip)">' + arcs + '</g>' +
+        outline
+      );
+    }
+    // 기본: 단색
+    return shapeTag + ' fill="' + (settings.hubColor || DEFAULT_SETTINGS.hubColor) + '" stroke="#242338" stroke-width="4"/>';
+  }
+
   function buildWheelSvg(entries) {
     const cx = 160, cy = 160, r = 150, textR = 100;
     const n = entries.length;
@@ -538,7 +1161,8 @@
     let labels = "";
 
     if (n === 1) {
-      shapes = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + PALETTE[0] + '" />';
+      const color = entries[0].color || PALETTE[0];
+      shapes = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + color + '" />';
       const label = escapeHtml(truncate(entries[0].label, 16));
       labels =
         '<text x="' + cx + '" y="' + (cy - textR) + '" transform="rotate(0 ' + cx + ' ' + cy + ')" ' +
@@ -555,7 +1179,7 @@
         const x2 = (cx + r * Math.cos(a2r)).toFixed(2);
         const y2 = (cy + r * Math.sin(a2r)).toFixed(2);
         const largeArc = (a2 - a1) > 180 ? 1 : 0;
-        const color = PALETTE[i % PALETTE.length];
+        const color = slice.entry.color || PALETTE[i % PALETTE.length];
         shapes +=
           '<path d="M ' + cx + ',' + cy + ' L ' + x1 + ',' + y1 +
           ' A ' + r + ',' + r + ' 0 ' + largeArc + ' 1 ' + x2 + ',' + y2 +
@@ -568,7 +1192,7 @@
       });
     }
 
-    const hub = '<circle cx="' + cx + '" cy="' + cy + '" r="11" fill="#E8B86D" stroke="#242338" stroke-width="4"/>';
+    const hub = buildHubMarkup(cx, cy, 11);
 
     return '<svg viewBox="0 0 320 320" width="100%" height="100%">' + shapes + labels + hub + '</svg>';
   }
@@ -584,39 +1208,47 @@
       .filter((l) => l.length > 0);
   }
 
-  // "어쩌고-저쩌고-1234" 형식이면 첫 "-" 앞부분만 화면에 보이는 라벨로 쓰고,
-  // 뒷부분은 note로 따로 저장해서 하단에 작게 표시한다.
-  function splitLabelAndNote(raw) {
+  // "어쩌고-5"처럼 "-" 뒤가 숫자만 있으면 그 숫자를 초기 가중치(1~10)로 쓰고,
+  // "어쩌고-저쩌고"처럼 숫자가 아니면 기존처럼 note(당첨 후 하단에 표시)로 쓴다.
+  function parseEntryFromRaw(raw) {
     const idx = raw.indexOf("-");
-    if (idx === -1) return { label: raw, note: null };
-    const label = raw.slice(0, idx).trim();
-    const note = raw.slice(idx + 1).trim();
-    return { label: label || raw, note: note || null };
-  }
-
-  // "어쩌고-저쩌고-1234" 형식이면 끝의 "-숫자" 부분을 분리해
-  // 화면에는 "어쩌고-저쩌고"만 보이게 하고 숫자는 코드로 따로 저장한다.
-  function parseLabelAndCode(raw) {
-    const m = raw.match(/^(.*)-(\d+)\s*$/);
-    if (m && m[1].trim().length > 0) {
-      return { label: m[1].trim(), code: m[2] };
+    if (idx === -1) return { label: raw, note: null, weight: 1 };
+    const label = raw.slice(0, idx).trim() || raw;
+    const rest = raw.slice(idx + 1).trim();
+    if (/^\d+$/.test(rest)) {
+      const w = clamp(parseInt(rest, 10), WEIGHT_MIN, WEIGHT_MAX);
+      return { label, note: null, weight: w };
     }
-    return { label: raw, code: null };
+    return { label, note: rest || null, weight: 1 };
   }
 
   function render() {
     const n = entries.length;
+    const userPresets = getUserPresets();
+    if ((settings.backgroundType || "color") === "image" && settings.backgroundImage) {
+      document.body.style.background = "#000000 url('" + settings.backgroundImage + "') center center / cover no-repeat fixed";
+    } else {
+      document.body.style.background = settings.background || DEFAULT_SETTINGS.background;
+    }
 
     root.innerHTML =
       '<div class="wa-wrap">' +
+        '<div class="wa-authbar">' +
+          (currentUser
+            ? '<span class="wa-authbar-email">' + escapeHtml(currentUser.email) + '</span>' +
+              '<button class="wa-icon-btn" id="wa-logout-btn">로그아웃</button>'
+            : '<button class="wa-icon-btn" id="wa-open-login">로그인</button>' +
+              '<button class="wa-icon-btn" id="wa-open-signup">회원가입</button>') +
+        '</div>' +
         '<div class="wa-brand"><h1 class="wa-title">FormWheel</h1><span class="wa-brand-tag">돌림판</span></div>' +
-        '<p class="wa-sub"><code>[어쩌고] [저쩌고]</code> 처럼 대괄호로 적으면 각각 개별 항목으로 들어가고, 대괄호 없이 줄바꿈만 해도 한 줄씩 항목으로 들어가요. <code>[어쩌고-저쩌고-1234]</code>처럼 "-"가 있으면 앞부분만 화면에 보이고, 나머지는 그 항목이 당첨된 뒤 팝업이 닫히면 하단에 작게 표시돼요.</p>' +
+        '<p class="wa-sub"><code>[어쩌고] [저쩌고]</code> 처럼 대괄호로 적으면 각각 개별 항목으로 들어가고, 대괄호 없이 줄바꿈만 해도 한 줄씩 항목으로 들어가요. <code>[항목-5]</code>처럼 "-" 뒤에 숫자만 쓰면 그 숫자가 초기 가중치(1~10)로 설정돼요. <code>[어쩌고-저쩌고]</code>처럼 "-" 뒤가 숫자가 아니면 그 부분은 note로 저장되어, 그 항목이 당첨된 뒤 팝업이 닫히면 하단에 작게 표시돼요.</p>' +
         '<div class="wa-grid">' +
           '<div class="wa-panel">' +
             '<div class="wa-panel-header">' +
               '<h2>항목 목록 (' + n + '개)</h2>' +
               '<div style="display:flex;gap:4px;">' +
-                '<button class="wa-icon-btn" id="wa-reset-effects-btn" ' + (spinning ? "disabled" : "") + '>효과 모두 삭제하기</button>' +
+                '<button class="wa-icon-btn" id="wa-copy-all-btn" ' + (n === 0 ? "disabled" : "") + '>' + (copyFeedback ? "복사됨 ✓" : "모두 복사") + '</button>' +
+                '<button class="wa-icon-btn" id="wa-reset-effects-btn" ' + (spinning ? "disabled" : "") + '>효과 초기화</button>' +
                 '<button class="wa-icon-btn" id="wa-clear-btn" ' + (n === 0 || spinning ? "disabled" : "") + '>전체 삭제</button>' +
               '</div>' +
             '</div>' +
@@ -643,6 +1275,8 @@
                     optionHtml("gold", settings.popupStyle, "골드 (기본)") +
                     optionHtml("bold", settings.popupStyle, "화려한 그라디언트") +
                     optionHtml("minimal", settings.popupStyle, "미니멀") +
+                    optionHtml("neon", settings.popupStyle, "네온") +
+                    optionHtml("retro", settings.popupStyle, "레트로") +
                   '</select>' +
                 '</div>' +
                 '<div class="wa-settings-field">' +
@@ -650,10 +1284,153 @@
                   '<select class="wa-input" id="wa-effect-select" ' + (spinning ? "disabled" : "") + '>' +
                     optionHtml("confetti", settings.effect, "폭죽 (컨페티)") +
                     optionHtml("fireworks", settings.effect, "불꽃놀이") +
+                    optionHtml("sparkle", settings.effect, "반짝반짝") +
+                    optionHtml("hearts", settings.effect, "하트 뿌리기") +
+                    '<option value="glitch" ' + (settings.effect === "glitch" ? "selected" : "") + (currentUser ? "" : " disabled") + '>' + (currentUser ? "해킹 글리치" : "해킹 글리치 (로그인 필요)") + '</option>' +
                     optionHtml("none", settings.effect, "효과 없음") +
                   '</select>' +
                 '</div>' +
               '</div>' +
+              '<div class="wa-settings-row" style="margin-top:10px;">' +
+                '<div class="wa-settings-field">' +
+                  '<label for="wa-popup-font-select">팝업 글씨체</label>' +
+                  '<select class="wa-input" id="wa-popup-font-select" ' + (spinning ? "disabled" : "") + '>' +
+                    optionHtml("default", (settings.popupFont || "default"), "기본 (세리프)") +
+                    optionHtml("sans", (settings.popupFont || "default"), "모던 산세리프") +
+                    optionHtml("blackhan", (settings.popupFont || "default"), "블랙한산스") +
+                    optionHtml("dohyeon", (settings.popupFont || "default"), "도현체") +
+                    optionHtml("pen", (settings.popupFont || "default"), "나눔손글씨") +
+                    optionHtml("mono", (settings.popupFont || "default"), "타자기체") +
+                  '</select>' +
+                '</div>' +
+              '</div>' +
+              (settings.effect === "glitch" && currentUser
+                ? '<div class="wa-settings-row" style="margin-top:10px;">' +
+                    '<div class="wa-settings-field">' +
+                      '<label>글리치 색상</label>' +
+                      '<div style="display:flex;gap:6px;">' +
+                        (Array.isArray(settings.glitchColors) ? settings.glitchColors : DEFAULT_SETTINGS.glitchColors)
+                          .map((c, i) => '<input class="wa-color-input" id="wa-glitch-color-' + i + '" type="color" value="' + c + '" ' + (spinning ? "disabled" : "") + '>')
+                          .join("") +
+                      '</div>' +
+                    '</div>' +
+                  '</div>'
+                : '') +
+            '</div>' +
+            '<div class="wa-settings-box">' +
+              '<p class="wa-settings-title">꾸미기 설정 (로그인 필요)</p>' +
+              (!currentUser
+                ? '<p class="wa-lock-note">🔒 배경(색상/사진), 돌림판 테두리/모양, 중앙 원 스타일·모양(색상/레인보우/사진/없음, 원/사각형/삼각형 등), 각 항목 색상은 로그인 후에 바꿀 수 있어요. 지금은 게스트로 돌림판을 사용할 수 있어요.</p>'
+                : '') +
+              '<div class="wa-settings-row">' +
+                '<div class="wa-settings-field">' +
+                  '<label for="wa-bg-type-select">배경 스타일</label>' +
+                  '<select class="wa-input" id="wa-bg-type-select" ' + (!currentUser || spinning ? "disabled" : "") + '>' +
+                    optionHtml("color", (settings.backgroundType || "color"), "색상") +
+                    optionHtml("image", (settings.backgroundType || "color"), "사진 업로드") +
+                  '</select>' +
+                '</div>' +
+                '<div class="wa-settings-field">' +
+                  '<label for="wa-border-color-input">테두리 색상</label>' +
+                  '<input class="wa-color-input" id="wa-border-color-input" type="color" value="' + settings.wheelBorderColor + '" ' + (!currentUser || spinning ? "disabled" : "") + '>' +
+                '</div>' +
+              '</div>' +
+              ((settings.backgroundType || "color") === "color"
+                ? '<div class="wa-settings-row" style="margin-top:10px;">' +
+                    '<div class="wa-settings-field">' +
+                      '<label for="wa-bg-input">배경 색상</label>' +
+                      '<input class="wa-color-input" id="wa-bg-input" type="color" value="' + settings.background + '" ' + (!currentUser || spinning ? "disabled" : "") + '>' +
+                    '</div>' +
+                  '</div>'
+                : '') +
+              (settings.backgroundType === "image"
+                ? '<div class="wa-settings-row" style="margin-top:10px;align-items:center;">' +
+                    '<div class="wa-settings-field">' +
+                      '<label for="wa-bg-image-input">배경 사진 선택</label>' +
+                      '<input class="wa-input" id="wa-bg-image-input" type="file" accept="image/*" style="padding:5px;" ' + (!currentUser || spinning ? "disabled" : "") + '>' +
+                    '</div>' +
+                    (settings.backgroundImage
+                      ? '<div style="flex:none;display:flex;align-items:center;gap:6px;padding-top:14px;">' +
+                          '<img src="' + settings.backgroundImage + '" alt="" style="width:32px;height:32px;border-radius:6px;object-fit:cover;border:1px solid var(--card-border);">' +
+                          '<button class="wa-icon-btn" id="wa-bg-image-remove" ' + (!currentUser || spinning ? "disabled" : "") + '>제거</button>' +
+                        '</div>'
+                      : '') +
+                  '</div>'
+                : '') +
+              '<div class="wa-settings-row" style="margin-top:10px;">' +
+                '<div class="wa-settings-field">' +
+                  '<label for="wa-border-width-input">테두리 두께 (px)</label>' +
+                  '<input class="wa-input" id="wa-border-width-input" type="number" min="' + BORDER_WIDTH_MIN + '" max="' + BORDER_WIDTH_MAX + '" step="1" value="' + settings.wheelBorderWidth + '" ' + (!currentUser || spinning ? "disabled" : "") + '>' +
+                '</div>' +
+                '<div class="wa-settings-field">' +
+                  '<label for="wa-wheel-shape-select">돌림판 테두리 모양</label>' +
+                  '<select class="wa-input" id="wa-wheel-shape-select" ' + (!currentUser || spinning ? "disabled" : "") + '>' +
+                    optionHtml("circle", (settings.wheelShape || "circle"), "원 (기본)") +
+                    optionHtml("square", (settings.wheelShape || "circle"), "사각형") +
+                    optionHtml("triangle", (settings.wheelShape || "circle"), "삼각형") +
+                    optionHtml("diamond", (settings.wheelShape || "circle"), "다이아몬드") +
+                    optionHtml("pentagon", (settings.wheelShape || "circle"), "오각형") +
+                    optionHtml("hexagon", (settings.wheelShape || "circle"), "육각형") +
+                  '</select>' +
+                '</div>' +
+              '</div>' +
+              '<div class="wa-settings-row" style="margin-top:10px;">' +
+                '<div class="wa-settings-field">' +
+                  '<label for="wa-hub-type-select">중앙 원 스타일</label>' +
+                  '<select class="wa-input" id="wa-hub-type-select" ' + (!currentUser || spinning ? "disabled" : "") + '>' +
+                    optionHtml("color", (settings.hubType || "color"), "단색") +
+                    optionHtml("rainbow", (settings.hubType || "color"), "레인보우") +
+                    optionHtml("image", (settings.hubType || "color"), "사진 업로드") +
+                    optionHtml("none", (settings.hubType || "color"), "없음") +
+                  '</select>' +
+                '</div>' +
+                '<div class="wa-settings-field">' +
+                  '<label for="wa-hub-shape-select">중앙 원 모양</label>' +
+                  '<select class="wa-input" id="wa-hub-shape-select" ' + (!currentUser || spinning ? "disabled" : "") + '>' +
+                    optionHtml("circle", (settings.hubShape || "circle"), "원 (기본)") +
+                    optionHtml("square", (settings.hubShape || "circle"), "사각형") +
+                    optionHtml("triangle", (settings.hubShape || "circle"), "삼각형") +
+                    optionHtml("diamond", (settings.hubShape || "circle"), "다이아몬드") +
+                    optionHtml("pentagon", (settings.hubShape || "circle"), "오각형") +
+                    optionHtml("hexagon", (settings.hubShape || "circle"), "육각형") +
+                  '</select>' +
+                '</div>' +
+              '</div>' +
+              ((settings.hubType || "color") === "color"
+                ? '<div class="wa-settings-row" style="margin-top:10px;">' +
+                    '<div class="wa-settings-field">' +
+                      '<label for="wa-hub-input">중앙 원 색상</label>' +
+                      '<input class="wa-color-input" id="wa-hub-input" type="color" value="' + settings.hubColor + '" ' + (!currentUser || spinning ? "disabled" : "") + '>' +
+                    '</div>' +
+                  '</div>'
+                : '') +
+              (settings.hubType === "image"
+                ? '<div class="wa-settings-row" style="margin-top:10px;align-items:center;">' +
+                    '<div class="wa-settings-field">' +
+                      '<label for="wa-hub-image-input">사진 선택</label>' +
+                      '<input class="wa-input" id="wa-hub-image-input" type="file" accept="image/*" style="padding:5px;" ' + (!currentUser || spinning ? "disabled" : "") + '>' +
+                    '</div>' +
+                    (settings.hubImage
+                      ? '<div style="flex:none;display:flex;align-items:center;gap:6px;padding-top:14px;">' +
+                          '<img src="' + settings.hubImage + '" alt="" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1px solid var(--card-border);">' +
+                          '<button class="wa-icon-btn" id="wa-hub-image-remove" ' + (!currentUser || spinning ? "disabled" : "") + '>제거</button>' +
+                        '</div>'
+                      : '') +
+                  '</div>'
+                : '') +
+            '</div>' +
+            '<div class="wa-settings-box">' +
+              '<p class="wa-settings-title">돌림판 저장 (로그인 필요)</p>' +
+              (!currentUser
+                ? '<p class="wa-lock-note">🔒 로그인하면 지금 항목·가중치·색상·설정을 이름 붙여 저장하고, 나중에 다시 불러올 수 있어요.</p>'
+                : '') +
+              '<div class="wa-form-row">' +
+                '<input class="wa-input" id="wa-preset-name-input" type="text" placeholder="프리셋 이름 (예: 점심 메뉴)" value="' + escapeAttr(presetNameInputValue) + '" ' + (!currentUser || spinning ? "disabled" : "") + '>' +
+                '<button class="wa-btn wa-btn-primary" id="wa-preset-save-btn" ' + (!currentUser || spinning || n === 0 ? "disabled" : "") + '>저장</button>' +
+              '</div>' +
+              (currentUser && userPresets.length > 0
+                ? '<div class="wa-list" style="max-height:170px;">' + userPresets.map((p) => presetRowHtml(p)).join("") + '</div>'
+                : (currentUser ? '<p class="wa-hint" style="margin:2px 0 0;">아직 저장된 돌림판이 없어요.</p>' : '')) +
             '</div>' +
             '<div class="wa-list" id="wa-list">' +
               (n === 0
@@ -664,7 +1441,10 @@
           '<div class="wa-panel wa-wheel-col">' +
             '<div class="wa-wheel-holder">' +
               '<div class="wa-pointer"></div>' +
-              '<div class="wa-wheel" id="wa-wheel-el">' + buildWheelSvg(entries) + '</div>' +
+              (function () {
+                const wShape = wheelShapeStyle(settings.wheelShape || "circle");
+                return '<div class="wa-wheel" id="wa-wheel-el" style="border-width:' + (settings.wheelBorderWidth != null ? settings.wheelBorderWidth : DEFAULT_SETTINGS.wheelBorderWidth) + 'px;border-color:' + (settings.wheelBorderColor || DEFAULT_SETTINGS.wheelBorderColor) + ';border-radius:' + wShape.borderRadius + ';clip-path:' + wShape.clipPath + ';">' + buildWheelSvg(entries) + '</div>';
+              })() +
             '</div>' +
             '<button class="wa-spin-btn" id="wa-spin-btn" ' + (spinning || n === 0 ? "disabled" : "") + '>' +
               (spinning ? "도는 중..." : "돌리기") +
@@ -680,7 +1460,8 @@
         buildNotesFooter() +
       '</div>' +
       (winnerModalOpen && lastWinner ? winnerModalHtml() : "") +
-      (confirmClearOpen ? confirmModalHtml() : "");
+      (confirmClearOpen ? confirmModalHtml() : "") +
+      (authView ? authModalHtml() : "");
 
     const wheelEl = document.getElementById("wa-wheel-el");
     if (wheelEl && currentRotation !== 0) {
@@ -697,6 +1478,9 @@
     const clearBtn = document.getElementById("wa-clear-btn");
     if (clearBtn) clearBtn.addEventListener("click", requestClearAll);
 
+    const copyAllBtn = document.getElementById("wa-copy-all-btn");
+    if (copyAllBtn) copyAllBtn.addEventListener("click", copyAllEntries);
+
     const resetEffectsBtn = document.getElementById("wa-reset-effects-btn");
     if (resetEffectsBtn) resetEffectsBtn.addEventListener("click", resetEffectSettings);
 
@@ -709,16 +1493,85 @@
     const popupStyleSelect = document.getElementById("wa-popup-style-select");
     if (popupStyleSelect) popupStyleSelect.addEventListener("change", (ev) => updatePopupStyle(ev.target.value));
 
+    const popupFontSelect = document.getElementById("wa-popup-font-select");
+    if (popupFontSelect) popupFontSelect.addEventListener("change", (ev) => updatePopupFont(ev.target.value));
+
     const effectSelect = document.getElementById("wa-effect-select");
     if (effectSelect) effectSelect.addEventListener("change", (ev) => updateEffect(ev.target.value));
+
+    for (let gi = 0; gi < 4; gi++) {
+      const glitchColorInput = document.getElementById("wa-glitch-color-" + gi);
+      if (glitchColorInput) {
+        glitchColorInput.addEventListener("change", ((idx) => (ev) => updateGlitchColor(idx, ev.target.value))(gi));
+      }
+    }
+
+    const bgTypeSelect = document.getElementById("wa-bg-type-select");
+    if (bgTypeSelect) bgTypeSelect.addEventListener("change", (ev) => updateBackgroundType(ev.target.value));
+
+    const bgImageInput = document.getElementById("wa-bg-image-input");
+    if (bgImageInput) {
+      bgImageInput.addEventListener("change", (ev) => {
+        const file = ev.target.files && ev.target.files[0];
+        if (file) updateBackgroundImage(file);
+      });
+    }
+
+    const bgImageRemoveBtn = document.getElementById("wa-bg-image-remove");
+    if (bgImageRemoveBtn) bgImageRemoveBtn.addEventListener("click", removeBackgroundImage);
+
+    const bgInput = document.getElementById("wa-bg-input");
+    if (bgInput) bgInput.addEventListener("change", (ev) => updateBackground(ev.target.value));
+
+    const borderColorInput = document.getElementById("wa-border-color-input");
+    if (borderColorInput) borderColorInput.addEventListener("change", (ev) => updateWheelBorderColor(ev.target.value));
+
+    const borderWidthInput = document.getElementById("wa-border-width-input");
+    if (borderWidthInput) borderWidthInput.addEventListener("change", (ev) => updateWheelBorderWidth(ev.target.value));
+
+    const hubInput = document.getElementById("wa-hub-input");
+    if (hubInput) hubInput.addEventListener("change", (ev) => updateHubColor(ev.target.value));
+
+    const hubTypeSelect = document.getElementById("wa-hub-type-select");
+    if (hubTypeSelect) hubTypeSelect.addEventListener("change", (ev) => updateHubType(ev.target.value));
+
+    const hubImageInput = document.getElementById("wa-hub-image-input");
+    if (hubImageInput) {
+      hubImageInput.addEventListener("change", (ev) => {
+        const file = ev.target.files && ev.target.files[0];
+        if (file) updateHubImage(file);
+      });
+    }
+
+    const hubImageRemoveBtn = document.getElementById("wa-hub-image-remove");
+    if (hubImageRemoveBtn) hubImageRemoveBtn.addEventListener("click", removeHubImage);
+
+    const hubShapeSelect = document.getElementById("wa-hub-shape-select");
+    if (hubShapeSelect) hubShapeSelect.addEventListener("change", (ev) => updateHubShape(ev.target.value));
+
+    const wheelShapeSelect = document.getElementById("wa-wheel-shape-select");
+    if (wheelShapeSelect) wheelShapeSelect.addEventListener("change", (ev) => updateWheelShape(ev.target.value));
+
+    const presetNameInput = document.getElementById("wa-preset-name-input");
+    if (presetNameInput) presetNameInput.addEventListener("input", (ev) => { presetNameInputValue = ev.target.value; });
+    const presetSaveBtn = document.getElementById("wa-preset-save-btn");
+    if (presetSaveBtn) presetSaveBtn.addEventListener("click", saveCurrentPreset);
+    userPresets.forEach((p) => {
+      const loadBtn = document.getElementById("wa-preset-load-" + p.id);
+      const delBtn = document.getElementById("wa-preset-del-" + p.id);
+      if (loadBtn) loadBtn.addEventListener("click", () => loadPreset(p.id));
+      if (delBtn) delBtn.addEventListener("click", () => deletePreset(p.id));
+    });
 
     entries.forEach((e) => {
       const delBtn = document.getElementById("wa-del-" + e.id);
       const editBtn = document.getElementById("wa-edit-" + e.id);
       const weightInput = document.getElementById("wa-weight-" + e.id);
+      const colorInput = document.getElementById("wa-color-" + e.id);
       if (delBtn) delBtn.addEventListener("click", () => deleteEntry(e.id));
       if (editBtn) editBtn.addEventListener("click", () => { editingId = e.id; render(); });
       if (weightInput) weightInput.addEventListener("change", (ev) => updateWeight(e.id, ev.target.value));
+      if (colorInput) colorInput.addEventListener("change", (ev) => updateEntryColor(e.id, ev.target.value));
     });
 
     if (editingId) {
@@ -758,6 +1611,42 @@
       if (cancelBtn2) cancelBtn2.addEventListener("click", cancelClearAll);
       if (cOverlay) cOverlay.addEventListener("click", (ev) => { if (ev.target === cOverlay) cancelClearAll(); });
     }
+
+    // 로그인/회원가입/인증 팝업
+    const openLoginBtn = document.getElementById("wa-open-login");
+    if (openLoginBtn) openLoginBtn.addEventListener("click", () => { authView = "login"; resetAuthForm(); render(); });
+    const openSignupBtn = document.getElementById("wa-open-signup");
+    if (openSignupBtn) openSignupBtn.addEventListener("click", () => { authView = "signup"; resetAuthForm(); render(); });
+    const logoutBtn = document.getElementById("wa-logout-btn");
+    if (logoutBtn) logoutBtn.addEventListener("click", logout);
+
+    if (authView) {
+      const overlay = document.getElementById("wa-auth-overlay");
+      const cancelBtn = document.getElementById("wa-auth-cancel");
+      const submitBtn = document.getElementById("wa-auth-submit");
+      const gotoSignup = document.getElementById("wa-auth-goto-signup");
+      const gotoLogin = document.getElementById("wa-auth-goto-login");
+      const emailInput = document.getElementById("wa-auth-email");
+      const pwInput = document.getElementById("wa-auth-password");
+      const confirmInput = document.getElementById("wa-auth-confirm");
+      const notRobotInput = document.getElementById("wa-auth-notrobot");
+
+      if (emailInput) emailInput.addEventListener("input", (ev) => { authForm.email = ev.target.value; });
+      if (pwInput) pwInput.addEventListener("input", (ev) => { authForm.password = ev.target.value; });
+      if (confirmInput) confirmInput.addEventListener("input", (ev) => { authForm.confirm = ev.target.value; });
+      if (notRobotInput) notRobotInput.addEventListener("change", (ev) => { authForm.notRobot = ev.target.checked; });
+
+      if (cancelBtn) cancelBtn.addEventListener("click", () => { authView = null; resetAuthForm(); render(); });
+      if (overlay) overlay.addEventListener("click", (ev) => { if (ev.target === overlay) { authView = null; resetAuthForm(); render(); } });
+      if (gotoSignup) gotoSignup.addEventListener("click", () => { authView = "signup"; authForm.error = ""; render(); });
+      if (gotoLogin) gotoLogin.addEventListener("click", () => { authView = "login"; authForm.error = ""; render(); });
+      if (submitBtn) {
+        submitBtn.addEventListener("click", () => {
+          if (authView === "login") submitLogin();
+          else if (authView === "signup") submitSignup();
+        });
+      }
+    }
   }
 
   function optionHtml(value, current, label) {
@@ -770,12 +1659,13 @@
   }
 
   function winnerModalHtml() {
+    const popupFontFamily = POPUP_FONTS[settings.popupFont] || POPUP_FONTS.default;
     return (
       '<div class="wa-modal-overlay" id="wa-winner-overlay">' +
         '<canvas class="wa-effect-canvas" id="wa-effect-canvas"></canvas>' +
         '<div class="wa-modal-card wa-modal-' + settings.popupStyle + '">' +
           '<div class="wa-modal-label">당첨</div>' +
-          '<div class="wa-modal-text">' + escapeHtml(lastWinner.label) + '</div>' +
+          '<div class="wa-modal-text" style="font-family:' + popupFontFamily + ';">' + escapeHtml(lastWinner.label) + '</div>' +
           '<div class="wa-modal-actions">' +
             '<button class="wa-btn wa-btn-ghost" id="wa-winner-delete" style="flex:1;">이 항목 삭제하기</button>' +
             '<button class="wa-btn wa-btn-primary" id="wa-winner-close" style="flex:1;">확인</button>' +
@@ -800,6 +1690,48 @@
     );
   }
 
+  function authModalHtml() {
+    let body = "";
+    if (authView === "login") {
+      body =
+        '<p class="wa-confirm-title">로그인</p>' +
+        (authForm.error ? '<p class="wa-auth-error">' + escapeHtml(authForm.error) + '</p>' : '') +
+        '<div class="wa-auth-field"><label for="wa-auth-email">이메일</label>' +
+          '<input class="wa-input" id="wa-auth-email" type="email" value="' + escapeAttr(authForm.email) + '" ' + (authBusy ? "disabled" : "") + '></div>' +
+        '<div class="wa-auth-field"><label for="wa-auth-password">비밀번호</label>' +
+          '<input class="wa-input" id="wa-auth-password" type="password" value="' + escapeAttr(authForm.password) + '" ' + (authBusy ? "disabled" : "") + '></div>' +
+        '<div class="wa-confirm-actions">' +
+          '<button class="wa-btn wa-btn-ghost" id="wa-auth-cancel" style="flex:1;" ' + (authBusy ? "disabled" : "") + '>취소</button>' +
+          '<button class="wa-btn wa-btn-primary" id="wa-auth-submit" style="flex:1;" ' + (authBusy ? "disabled" : "") + '>로그인</button>' +
+        '</div>' +
+        '<p class="wa-auth-switch">계정이 없으신가요? <button id="wa-auth-goto-signup">회원가입</button></p>';
+    } else if (authView === "signup") {
+      body =
+        '<p class="wa-confirm-title">회원가입</p>' +
+        (authForm.error ? '<p class="wa-auth-error">' + escapeHtml(authForm.error) + '</p>' : '') +
+        '<div class="wa-auth-field"><label for="wa-auth-email">이메일</label>' +
+          '<input class="wa-input" id="wa-auth-email" type="email" value="' + escapeAttr(authForm.email) + '" ' + (authBusy ? "disabled" : "") + '></div>' +
+        '<div class="wa-auth-field"><label for="wa-auth-password">비밀번호 (6자 이상)</label>' +
+          '<input class="wa-input" id="wa-auth-password" type="password" value="' + escapeAttr(authForm.password) + '" ' + (authBusy ? "disabled" : "") + '></div>' +
+        '<div class="wa-auth-field"><label for="wa-auth-confirm">비밀번호 확인</label>' +
+          '<input class="wa-input" id="wa-auth-confirm" type="password" value="' + escapeAttr(authForm.confirm) + '" ' + (authBusy ? "disabled" : "") + '></div>' +
+        '<div class="wa-captcha-row">' +
+          '<input type="checkbox" id="wa-auth-notrobot" ' + (authForm.notRobot ? "checked" : "") + ' ' + (authBusy ? "disabled" : "") + '>' +
+          '<label for="wa-auth-notrobot">저는 로봇이 아닙니다</label>' +
+        '</div>' +
+        '<div class="wa-confirm-actions">' +
+          '<button class="wa-btn wa-btn-ghost" id="wa-auth-cancel" style="flex:1;" ' + (authBusy ? "disabled" : "") + '>취소</button>' +
+          '<button class="wa-btn wa-btn-primary" id="wa-auth-submit" style="flex:1;" ' + (authBusy ? "disabled" : "") + '>가입하기</button>' +
+        '</div>' +
+        '<p class="wa-auth-switch">이미 계정이 있으신가요? <button id="wa-auth-goto-login">로그인</button></p>';
+    }
+    return (
+      '<div class="wa-modal-overlay" id="wa-auth-overlay">' +
+        '<div class="wa-modal-card wa-modal-minimal wa-confirm-card">' + body + '</div>' +
+      '</div>'
+    );
+  }
+
   function renderForm() {
     const slot = document.getElementById("wa-form-slot");
     if (!slot) return;
@@ -810,7 +1742,7 @@
       '<div class="wa-form-row">' +
         '<button class="wa-btn wa-btn-primary" id="wa-add-btn" style="width:100%;" ' + (spinning ? "disabled" : "") + '>추가</button>' +
       '</div>' +
-      '<p class="wa-hint">예: <code>[인터스텔라] [듄] [기생충]</code> 또는 한 줄에 하나씩 영화 제목만 적어도 돼요. 각 항목 옆 숫자로 크기(1~10)를 조절하면 돌림판 칸 크기와 당첨 확률이 달라져요.</p>';
+      '<p class="wa-hint">예: <code>[인터스텔라] [듄] [기생충-3]</code> 처럼 <code>-숫자</code>를 붙이면 그 항목 초기 크기(가중치)가 바로 설정돼요. 나중에 목록에서 항목 옆 숫자로도 언제든 조절할 수 있어요.</p>';
 
     const addBtn = document.getElementById("wa-add-btn");
     const box = document.getElementById("wa-new-input");
@@ -819,8 +1751,8 @@
       const labels = parseInputToLabels(box.value);
       if (labels.length === 0) return;
       labels.forEach((raw) => {
-        const { label, note } = splitLabelAndNote(raw);
-        entries.push({ id: uid(), label: label, note: note, weight: 1 });
+        const { label, note, weight } = parseEntryFromRaw(raw);
+        entries.push({ id: uid(), label: label, note: note, weight: weight });
       });
       saveEntries();
       box.value = "";
@@ -845,14 +1777,27 @@
         '</div>'
       );
     }
+    const color = e.color || PALETTE[i % PALETTE.length];
     return (
       '<div class="wa-entry">' +
-        '<span class="wa-entry-swatch" style="background:' + PALETTE[i % PALETTE.length] + '"></span>' +
+        '<input type="color" class="wa-color-input" id="wa-color-' + e.id + '" value="' + color + '" ' + (!currentUser || spinning ? "disabled" : "") + ' title="' + (currentUser ? "항목 색상" : "항목 색상 (로그인 후 변경 가능)") + '">' +
         '<span class="wa-entry-text">' + escapeHtml(e.label) + '</span>' +
         '<input type="number" class="wa-input wa-weight-input" id="wa-weight-' + e.id + '" min="' + WEIGHT_MIN + '" max="' + WEIGHT_MAX + '" step="1" value="' + (e.weight || 1) + '" title="크기 (칸 비율, 클수록 당첨 확률 높음)" ' + (spinning ? "disabled" : "") + '>' +
         '<span class="wa-entry-actions">' +
           '<button class="wa-icon-btn" id="wa-edit-' + e.id + '" ' + (spinning ? "disabled" : "") + '>수정</button>' +
           '<button class="wa-icon-btn" id="wa-del-' + e.id + '" ' + (spinning ? "disabled" : "") + '>삭제</button>' +
+        '</span>' +
+      '</div>'
+    );
+  }
+
+  function presetRowHtml(p) {
+    return (
+      '<div class="wa-entry">' +
+        '<span class="wa-entry-text">' + escapeHtml(p.name) + ' <span style="opacity:.55;font-weight:400;">(' + p.entries.length + '개)</span></span>' +
+        '<span class="wa-entry-actions">' +
+          '<button class="wa-icon-btn" id="wa-preset-load-' + p.id + '" ' + (spinning ? "disabled" : "") + '>불러오기</button>' +
+          '<button class="wa-icon-btn" id="wa-preset-del-' + p.id + '" ' + (spinning ? "disabled" : "") + '>삭제</button>' +
         '</span>' +
       '</div>'
     );
@@ -867,6 +1812,12 @@
   async function init() {
     await loadSettings();
     await loadEntries();
+    await loadUsers();
+    await loadSession();
+    await loadPresetsStore();
+    if (currentUser && !users.find((u) => u.email === currentUser.email && u.verified)) {
+      currentUser = null;
+    }
     render();
   }
 
