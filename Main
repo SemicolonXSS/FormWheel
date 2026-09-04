@@ -137,7 +137,7 @@
   .wa-modal-neon .wa-btn-primary { background: var(--neon-c, #39FF88); color: #06120A; }
   .wa-modal-neon .wa-btn-ghost { border-color: var(--neon-glow, rgba(57,255,136,0.4)); color: #9DF7C4; }
 
-  /* 시크릿 팝업 (FWsecret 코드로 잠금 해제) */
+  /* 시크릿 팝업 (FWsecret 코드로 잠금 해제)! */
   .wa-modal-diamond {
     background: linear-gradient(160deg, #E8F4FF 0%, #C9E6FB 40%, #9FCBEA 100%);
     color: #0B2A45; border: 2px solid #FFFFFF; position: relative; overflow: hidden;
