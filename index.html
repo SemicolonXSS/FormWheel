@@ -381,10 +381,15 @@
       languageLabel: "언어",
       presetCount: function (n) { return "(" + n + "개)"; },
       shareTitle: "돌림판 공유",
-      shareHint: "지금 항목·설정으로 공유 링크를 만들면, 링크를 받은 사람이 그대로 돌림판을 열어볼 수 있어요.",
-      shareBtn: "공유 링크 만들기", shareUrlLabel: "공유 링크", shareCopyBtn: "링크 복사", shareCopied: "복사됨 ✓",
+      shareHint: "지금 항목·설정으로 공유 코드를 만들면, 그 코드를 받은 사람이 코드만 입력해서 그대로 돌림판을 불러올 수 있어요.",
+      shareBtn: "공유 코드 만들기", shareCodeLabel: "공유 코드", shareCopyBtn: "코드 복사", shareCopied: "복사됨 ✓",
       shareNeedEntries: "항목을 먼저 추가해주세요.",
       sharedBannerText: "공유받은 돌림판이에요. 자유롭게 돌려보세요!",
+      loadCodeTitle: "코드로 불러오기",
+      loadCodeHint: "친구가 알려준 공유 코드를 입력하면 그 돌림판을 그대로 불러와요.",
+      loadCodePlaceholder: "코드 입력 (예: AB12CD)",
+      loadCodeBtn: "불러오기",
+      loadCodeNotFound: "그런 코드를 찾을 수 없어요. 코드를 다시 확인해주세요.",
       historyTitle: "당첨 히스토리",
       historyEmpty: "아직 당첨 기록이 없어요.",
       historyClear: "기록 지우기",
@@ -466,10 +471,15 @@
       languageLabel: "Language",
       presetCount: function (n) { return "(" + n + ")"; },
       shareTitle: "Share Wheel",
-      shareHint: "Create a share link with the current items and settings so anyone with the link can open this exact wheel.",
-      shareBtn: "Create Share Link", shareUrlLabel: "Share Link", shareCopyBtn: "Copy Link", shareCopied: "Copied ✓",
+      shareHint: "Create a share code with the current items and settings so anyone who enters the code can load this exact wheel.",
+      shareBtn: "Create Share Code", shareCodeLabel: "Share Code", shareCopyBtn: "Copy Code", shareCopied: "Copied ✓",
       shareNeedEntries: "Add some items first.",
       sharedBannerText: "This is a shared wheel — feel free to spin it!",
+      loadCodeTitle: "Load by Code",
+      loadCodeHint: "Enter a share code someone gave you to load their wheel exactly as they set it up.",
+      loadCodePlaceholder: "Enter code (e.g. AB12CD)",
+      loadCodeBtn: "Load",
+      loadCodeNotFound: "Couldn't find that code. Please double-check it.",
       historyTitle: "Winner History",
       historyEmpty: "No winners yet.",
       historyClear: "Clear History",
@@ -522,10 +532,13 @@
   let history = []; // [{ label, ts }]
 
   // --- 공유 상태 ---
-  let shareUrlValue = "";
+  let shareCodeValue = "";
   let shareCopyFeedback = false;
   let shareBusy = false;
   let sharedBannerVisible = false;
+  let loadCodeInputValue = "";
+  let loadCodeError = "";
+  let loadCodeBusy = false;
 
   const root = document.getElementById("wheel-app");
 
@@ -533,8 +546,14 @@
     return "e" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
   }
 
+  // 헷갈리기 쉬운 글자(0/O, 1/I/l)를 뺀 알파벳으로 사람이 말로 불러주기 쉬운 짧은 코드를 만든다.
+  const SHARE_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   function shortCode() {
-    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    let code = "";
+    for (let i = 0; i < 6; i++) {
+      code += SHARE_CODE_ALPHABET[Math.floor(Math.random() * SHARE_CODE_ALPHABET.length)];
+    }
+    return code;
   }
 
   function resetAuthForm() {
@@ -1430,7 +1449,7 @@
   }
 
   function setInputsDisabled(disabled) {
-    ["wa-duration-input", "wa-rounds-input", "wa-popup-style-select", "wa-popup-font-select", "wa-effect-select", "wa-sound-select", "wa-clear-btn", "wa-add-btn", "wa-bg-type-select", "wa-bg-input", "wa-bg-image-input", "wa-border-color-input", "wa-border-width-input", "wa-slice-text-color-input", "wa-slice-border-color-input", "wa-wheel-shape-select", "wa-hub-input", "wa-hub-type-select", "wa-hub-shape-select", "wa-hub-image-input", "wa-glitch-color-0", "wa-glitch-color-1", "wa-glitch-color-2", "wa-glitch-color-3", "wa-preset-name-input", "wa-preset-save-btn", "wa-lang-select", "wa-neon-color-input", "wa-lightning-color-input", "wa-matrix-color-input", "wa-bubble-color-input", "wa-secret-code-input", "wa-secret-code-btn", "wa-share-btn"].forEach((id) => {
+    ["wa-duration-input", "wa-rounds-input", "wa-popup-style-select", "wa-popup-font-select", "wa-effect-select", "wa-sound-select", "wa-clear-btn", "wa-add-btn", "wa-bg-type-select", "wa-bg-input", "wa-bg-image-input", "wa-border-color-input", "wa-border-width-input", "wa-slice-text-color-input", "wa-slice-border-color-input", "wa-wheel-shape-select", "wa-hub-input", "wa-hub-type-select", "wa-hub-shape-select", "wa-hub-image-input", "wa-glitch-color-0", "wa-glitch-color-1", "wa-glitch-color-2", "wa-glitch-color-3", "wa-preset-name-input", "wa-preset-save-btn", "wa-lang-select", "wa-neon-color-input", "wa-lightning-color-input", "wa-matrix-color-input", "wa-bubble-color-input", "wa-secret-code-input", "wa-secret-code-btn", "wa-share-btn", "wa-load-code-input", "wa-load-code-btn"].forEach((id) => {
       const el = document.getElementById(id);
       if (el) el.disabled = disabled;
     });
@@ -2061,18 +2080,8 @@
     return { label, note: rest || null, weight: 1 };
   }
 
-  // ---------- 공유 (URL로 돌림판 내보내기/가져오기) ----------
-  function buildShareUrl(code) {
-    try {
-      const url = new URL(window.location.href);
-      url.searchParams.set("wheel", code);
-      return url.toString();
-    } catch (e) {
-      return "?wheel=" + code;
-    }
-  }
-
-  async function createShareLink() {
+  // ---------- 공유 (짧은 코드로 돌림판 내보내기/가져오기) ----------
+  async function createShareCode() {
     if (entries.length === 0 || shareBusy) return;
     shareBusy = true;
     render();
@@ -2084,13 +2093,13 @@
     };
     await storageSet(SHARE_PREFIX + code, JSON.stringify(payload), true);
     shareBusy = false;
-    shareUrlValue = buildShareUrl(code);
+    shareCodeValue = code;
     render();
   }
 
-  async function copyShareUrl() {
-    if (!shareUrlValue) return;
-    const ok = await copyTextToClipboard(shareUrlValue);
+  async function copyShareCode() {
+    if (!shareCodeValue) return;
+    const ok = await copyTextToClipboard(shareCodeValue);
     if (ok) {
       shareCopyFeedback = true;
       render();
@@ -2098,6 +2107,45 @@
     }
   }
 
+  async function applySharedPayload(payload) {
+    if (!payload || !Array.isArray(payload.entries)) return false;
+    entries = payload.entries;
+    if (payload.settings) {
+      settings = { ...settings, ...payload.settings, secretUnlocked: settings.secretUnlocked };
+    }
+    currentRotation = 0;
+    lastWinner = null;
+    editingId = null;
+    sharedBannerVisible = true;
+    saveEntries();
+    saveSettings();
+    return true;
+  }
+
+  async function loadSharedByCode() {
+    const code = loadCodeInputValue.trim().toUpperCase();
+    if (!code || loadCodeBusy) return;
+    loadCodeBusy = true;
+    loadCodeError = "";
+    render();
+    const res = await storageGet(SHARE_PREFIX + code, true);
+    loadCodeBusy = false;
+    if (res && res.value) {
+      try {
+        const payload = JSON.parse(res.value);
+        const ok = await applySharedPayload(payload);
+        if (ok) {
+          loadCodeInputValue = "";
+          render();
+          return;
+        }
+      } catch (e) { /* 아래 에러 처리로 이어짐 */ }
+    }
+    loadCodeError = t("loadCodeNotFound");
+    render();
+  }
+
+  // 예전에 만든 공유 링크(?wheel=코드)로 들어온 경우도 계속 동작하도록 유지
   async function tryLoadSharedWheelFromUrl() {
     try {
       const params = new URLSearchParams(window.location.search);
@@ -2105,14 +2153,7 @@
       if (!code) return;
       const res = await storageGet(SHARE_PREFIX + code, true);
       if (res && res.value) {
-        const payload = JSON.parse(res.value);
-        if (payload && Array.isArray(payload.entries)) {
-          entries = payload.entries;
-          if (payload.settings) {
-            settings = { ...settings, ...payload.settings, secretUnlocked: settings.secretUnlocked };
-          }
-          sharedBannerVisible = true;
-        }
+        await applySharedPayload(JSON.parse(res.value));
       }
     } catch (e) { /* 공유 링크를 불러오지 못하면 조용히 무시하고 평소대로 시작 */ }
   }
@@ -2295,12 +2336,20 @@
               '<div class="wa-form-row">' +
                 '<button class="wa-btn wa-btn-primary" id="wa-share-btn" style="width:100%;" ' + (n === 0 || shareBusy ? "disabled" : "") + '>' + t("shareBtn") + '</button>' +
               '</div>' +
-              (shareUrlValue
-                ? '<div class="wa-form-row">' +
-                    '<input class="wa-input" type="text" readonly value="' + escapeAttr(shareUrlValue) + '" onclick="this.select()">' +
+              (shareCodeValue
+                ? '<div class="wa-form-row" style="align-items:center;">' +
+                    '<div class="wa-input" style="text-align:center;font-size:20px;font-weight:700;letter-spacing:0.12em;font-family:\'Courier New\',ui-monospace,monospace;background:#1B1A2E;">' + escapeHtml(shareCodeValue) + '</div>' +
                     '<button class="wa-btn wa-btn-ghost" id="wa-share-copy-btn">' + (shareCopyFeedback ? t("shareCopied") : t("shareCopyBtn")) + '</button>' +
                   '</div>'
                 : '') +
+              '<div style="height:12px;"></div>' +
+              '<p class="wa-settings-title" style="margin-bottom:6px;">' + t("loadCodeTitle") + '</p>' +
+              '<p class="wa-hint" style="margin:0 0 10px;">' + t("loadCodeHint") + '</p>' +
+              '<div class="wa-form-row">' +
+                '<input class="wa-input" id="wa-load-code-input" type="text" placeholder="' + escapeAttr(t("loadCodePlaceholder")) + '" value="' + escapeAttr(loadCodeInputValue) + '" style="text-transform:uppercase;" ' + (loadCodeBusy ? "disabled" : "") + '>' +
+                '<button class="wa-btn wa-btn-primary" id="wa-load-code-btn" ' + (loadCodeBusy ? "disabled" : "") + '>' + t("loadCodeBtn") + '</button>' +
+              '</div>' +
+              (loadCodeError ? '<p class="wa-auth-error" style="margin:0;">' + escapeHtml(loadCodeError) + '</p>' : '') +
             '</div>' +
             '<div class="wa-settings-box">' +
               '<p class="wa-settings-title">' + t("decorateTitle") + '</p>' +
@@ -2537,9 +2586,17 @@
     if (secretCodeBtn) secretCodeBtn.addEventListener("click", submitSecretCode);
 
     const shareBtn = document.getElementById("wa-share-btn");
-    if (shareBtn) shareBtn.addEventListener("click", createShareLink);
+    if (shareBtn) shareBtn.addEventListener("click", createShareCode);
     const shareCopyBtn = document.getElementById("wa-share-copy-btn");
-    if (shareCopyBtn) shareCopyBtn.addEventListener("click", copyShareUrl);
+    if (shareCopyBtn) shareCopyBtn.addEventListener("click", copyShareCode);
+
+    const loadCodeInput = document.getElementById("wa-load-code-input");
+    if (loadCodeInput) {
+      loadCodeInput.addEventListener("input", (ev) => { loadCodeInputValue = ev.target.value; });
+      loadCodeInput.addEventListener("keydown", (ev) => { if (ev.key === "Enter") loadSharedByCode(); });
+    }
+    const loadCodeBtn = document.getElementById("wa-load-code-btn");
+    if (loadCodeBtn) loadCodeBtn.addEventListener("click", loadSharedByCode);
 
     const historyClearBtn = document.getElementById("wa-history-clear-btn");
     if (historyClearBtn) historyClearBtn.addEventListener("click", clearHistory);
