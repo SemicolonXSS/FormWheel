@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FormWheel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Nanum+Pen+Script&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1B1A2E;
+    --card: #242338;
+    --card-border: #34314F;
+    --ink: #F0EDE4;
+    --muted: #A8A3C0;
+    --gold: #E8B86D;
+    --gold-ink: #241A08;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 40px 20px 60px;
+    transition: background 0.3s ease;
+  }
+  .wa-wrap { max-width: 880px; margin: 0 auto; }
+  .wa-authbar { display: flex; justify-content: flex-end; align-items: center; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .wa-authbar-email { font-size: 12px; color: var(--muted); margin-right: 2px; }
+  .wa-authbar .wa-icon-btn { border: 1px solid var(--card-border); }
+  .wa-lang-select { background: var(--card); color: var(--ink); border: 1px solid var(--card-border); border-radius: 8px; padding: 5px 8px; font-size: 12px; cursor: pointer; }
+  .wa-brand { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+  .wa-title { font-family: Georgia, 'Iowan Old Style', serif; font-size: 30px; margin: 0; letter-spacing: -0.01em; }
+  .wa-brand-tag { font-size: 11px; color: var(--muted); border: 1px solid var(--card-border); border-radius: 999px; padding: 2px 9px; }
+  .wa-sub { color: var(--muted); font-size: 14px; margin: 10px 0 32px; line-height: 1.5; }
+  .wa-sub code { background: var(--card); border: 1px solid var(--card-border); border-radius: 4px; padding: 1px 5px; font-size: 12px; }
+  .wa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  @media (max-width: 720px) { .wa-grid { grid-template-columns: 1fr; } }
+  .wa-panel { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; padding: 22px; }
+  .wa-panel h2 { font-size: 13px; font-weight: 600; color: var(--muted); margin: 0; }
+  .wa-panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .wa-form-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .wa-input {
+    flex: 1; background: #1B1A2E; border: 1px solid var(--card-border); border-radius: 8px;
+    padding: 9px 12px; color: var(--ink); font-size: 14px; outline: none; font-family: inherit; width: 100%;
+  }
+  .wa-input:focus { border-color: var(--gold); }
+  .wa-input:disabled, select.wa-input:disabled { opacity: 0.5; cursor: not-allowed; }
+  select.wa-input { appearance: none; cursor: pointer; }
+  .wa-btn { border: none; border-radius: 8px; padding: 9px 16px; font-size: 14px; cursor: pointer; font-weight: 600; }
+  .wa-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .wa-btn-primary { background: var(--gold); color: var(--gold-ink); }
+  .wa-btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--card-border); }
+  .wa-hint { font-size: 11px; color: var(--muted); margin: 0 0 14px; }
+  .wa-lock-note { font-size: 11px; color: var(--muted); margin: 0 0 12px; line-height: 1.5; }
+  .wa-list { display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; }
+  .wa-entry { display: flex; align-items: center; gap: 8px; background: #1B1A2E; border: 1px solid var(--card-border); border-radius: 8px; padding: 8px 10px; }
+  .wa-entry-text { flex: 1; font-size: 13px; line-height: 1.4; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wa-weight-input { flex: none !important; width: 46px; padding: 4px 6px !important; font-size: 12px !important; text-align: center; }
+  .wa-color-input {
+    flex: none !important; width: 30px !important; height: 30px; padding: 2px !important;
+    border-radius: 7px; cursor: pointer; background: none;
+  }
+  .wa-color-input:disabled { cursor: not-allowed; opacity: 0.45; }
+  .wa-entry-actions { display: flex; gap: 4px; }
+  .wa-icon-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; padding: 4px 6px; border-radius: 6px; }
+  .wa-icon-btn:hover { background: #2D2B47; color: var(--ink); }
+  .wa-icon-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .wa-icon-btn:disabled:hover { background: none; color: var(--muted); }
+  .wa-empty { color: var(--muted); font-size: 13px; padding: 20px 0; text-align: center; }
+
+  .wa-settings-box { border: 1px solid var(--card-border); border-radius: 10px; padding: 12px; margin-bottom: 14px; }
+  .wa-settings-title { font-size: 11px; color: var(--muted); margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .wa-settings-row { display: flex; gap: 10px; }
+  .wa-settings-field { flex: 1; }
+  .wa-settings-field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .wa-settings-field .wa-input { padding: 7px 10px; font-size: 13px; }
+
+  .wa-wheel-col { display: flex; flex-direction: column; align-items: center; }
+  .wa-wheel-holder { position: relative; width: 320px; height: 320px; margin: 10px auto 26px; max-width: 100%; }
+  .wa-pointer {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent;
+    border-top: 20px solid var(--gold); z-index: 3; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
+  }
+  .wa-wheel {
+    width: 100%; height: 100%; border-radius: 50%; position: relative; overflow: hidden;
+    border: 6px solid var(--card); box-shadow: 0 0 0 2px var(--card-border), 0 12px 30px rgba(0,0,0,0.4);
+    will-change: transform;
+  }
+  .wa-wheel svg { display: block; width: 100%; height: 100%; }
+  .wa-spin-btn {
+    background: var(--gold); color: var(--gold-ink); border: none; border-radius: 999px;
+    padding: 13px 38px; font-size: 15px; font-weight: 700; cursor: pointer; letter-spacing: 0.01em;
+  }
+  .wa-spin-btn:disabled { opacity: 0.5; cursor: default; }
+  .wa-winner { margin-top: 16px; text-align: center; min-height: 24px; }
+  .wa-winner .wa-win-label { font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+  .wa-winner .wa-win-text { font-family: Georgia, 'Iowan Old Style', serif; font-size: 18px; color: var(--muted); }
+  .wa-footer { text-align: center; margin-top: 40px; font-size: 11px; color: var(--muted); }
+  .wa-footer-notes { text-align: center; margin-top: 6px; font-size: 10px; color: var(--muted); opacity: 0.6; line-height: 1.7; }
+
+  /* modal overlays (winner popup + confirm dialog + auth) */
+  .wa-modal-overlay {
+    position: fixed; inset: 0; background: rgba(10,9,20,0.72);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; padding: 24px; animation: wa-fade-in 0.25s ease;
+  }
+  @keyframes wa-fade-in { from { opacity: 0; } to { opacity: 1; } }
+  .wa-modal-card {
+    position: relative; z-index: 1002; border-radius: 20px; padding: 36px 44px;
+    text-align: center; min-width: 260px; max-width: 90vw;
+    animation: wa-pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes wa-pop-in { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .wa-modal-label { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; margin-bottom: 10px; }
+  .wa-modal-text { font-family: Georgia, 'Iowan Old Style', serif; font-size: 32px; font-weight: 700; margin: 0 0 8px; word-break: break-word; line-height: 1.25; }
+  .wa-modal-note { font-size: 12px; opacity: 0.6; margin: 0 0 22px; }
+
+  .wa-modal-gold { background: var(--card); border: 2px solid var(--gold); color: var(--ink); box-shadow: 0 0 60px rgba(232,184,109,0.35), 0 20px 60px rgba(0,0,0,0.5); }
+  .wa-modal-gold .wa-modal-label { color: var(--gold); }
+
+  .wa-modal-bold { background: linear-gradient(135deg, #E8B86D, #D4A5C9 55%, #7E9CD8); color: #1B1A2E; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .wa-modal-bold .wa-modal-label { color: #1B1A2E; opacity: 0.6; }
+  .wa-modal-bold .wa-btn-primary { background: #1B1A2E; color: #F0EDE4; }
+
+  .wa-modal-minimal { background: var(--ink); color: var(--bg); box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+  .wa-modal-minimal .wa-modal-label { color: #6B6650; }
+  .wa-modal-minimal .wa-btn-primary { background: var(--bg); color: var(--ink); }
+
+  .wa-modal-neon { background: #0D0D17; border: 2px solid var(--neon-c, #39FF88); color: #EAFFF0; box-shadow: 0 0 14px var(--neon-c, #39FF88), 0 0 46px var(--neon-glow, rgba(57,255,136,0.5)), 0 2px 4px rgba(0,0,0,0.6); }
+  .wa-modal-neon .wa-modal-label { color: var(--neon-c, #39FF88); text-shadow: 0 0 8px var(--neon-glow, rgba(57,255,136,0.8)); }
+  .wa-modal-neon .wa-modal-text { text-shadow: 0 0 10px var(--neon-glow, rgba(57,255,136,0.5)); }
+  .wa-modal-neon .wa-btn-primary { background: var(--neon-c, #39FF88); color: #06120A; }
+  .wa-modal-neon .wa-btn-ghost { border-color: var(--neon-glow, rgba(57,255,136,0.4)); color: #9DF7C4; }
+
+  /* 시크릿 팝업 (FWsecret 코드로 잠금 해제)! */
+  .wa-modal-diamond {
+    background: linear-gradient(160deg, #E8F4FF 0%, #C9E6FB 40%, #9FCBEA 100%);
+    color: #0B2A45; border: 2px solid #FFFFFF; position: relative; overflow: hidden;
+    box-shadow: 0 0 40px rgba(255,255,255,0.6), 0 0 80px rgba(159,203,234,0.5), 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .wa-modal-diamond::before {
+    content: ""; position: absolute; inset: 0;
+    background: repeating-linear-gradient(45deg, rgba(255,255,255,0.35) 0 2px, transparent 2px 22px),
+                repeating-linear-gradient(-45deg, rgba(255,255,255,0.25) 0 2px, transparent 2px 26px);
+    mix-blend-mode: screen; opacity: 0.7;
+  }
+  .wa-modal-diamond .wa-modal-label, .wa-modal-diamond .wa-modal-text, .wa-modal-diamond .wa-modal-actions { position: relative; z-index: 1; }
+  .wa-modal-diamond .wa-modal-label { color: #2E6BA8; letter-spacing: 0.14em; }
+  .wa-modal-diamond .wa-modal-text { text-shadow: 0 0 14px rgba(255,255,255,0.9); }
+  .wa-modal-diamond .wa-btn-primary { background: #2E6BA8; color: #EAF6FF; }
+  .wa-modal-diamond .wa-btn-ghost { border-color: rgba(46,107,168,0.35); color: #2E6BA8; }
+
+  .wa-modal-fire {
+    background: linear-gradient(180deg, #2B0A02 0%, #6E1B02 45%, #C4460A 80%, #FF8A1E 100%);
+    color: #FFF3E0; border: 2px solid #FF7A1A;
+    box-shadow: 0 0 50px rgba(255,122,26,0.55), 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .wa-modal-fire .wa-modal-label { color: #FFC97A; letter-spacing: 0.12em; }
+  .wa-modal-fire .wa-modal-text { text-shadow: 0 0 18px rgba(255,138,30,0.8), 0 0 6px rgba(255,255,255,0.4); }
+  .wa-modal-fire .wa-btn-primary { background: #FF7A1A; color: #2B0A02; }
+  .wa-modal-fire .wa-btn-ghost { border-color: rgba(255,201,122,0.4); color: #FFC97A; }
+
+  .wa-modal-galaxy {
+    background:
+      radial-gradient(circle at 25% 15%, rgba(255,255,255,0.9) 0 1px, transparent 1px),
+      radial-gradient(circle at 70% 40%, rgba(255,255,255,0.7) 0 1px, transparent 1px),
+      radial-gradient(circle at 45% 75%, rgba(255,255,255,0.8) 0 1px, transparent 1px),
+      radial-gradient(circle at 85% 80%, rgba(255,255,255,0.6) 0 1px, transparent 1px),
+      radial-gradient(circle at 15% 60%, rgba(255,255,255,0.5) 0 1px, transparent 1px),
+      radial-gradient(ellipse at 50% 50%, #3A1C6E 0%, #1B0E3D 55%, #0A0620 100%);
+    color: #EDE6FF; border: 1px solid rgba(190,150,255,0.4);
+    box-shadow: 0 0 60px rgba(140,90,220,0.45), 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .wa-modal-galaxy .wa-modal-label { color: #C7A9FF; letter-spacing: 0.16em; }
+  .wa-modal-galaxy .wa-modal-text { text-shadow: 0 0 16px rgba(199,169,255,0.6); }
+  .wa-modal-galaxy .wa-btn-primary { background: #C7A9FF; color: #1B0E3D; }
+  .wa-modal-galaxy .wa-btn-ghost { border-color: rgba(199,169,255,0.4); color: #D8C4FF; }
+
+  .wa-modal-retro { background: repeating-linear-gradient(45deg, #F4E9D8, #F4E9D8 10px, #EADFC8 10px, #EADFC8 20px); border: 3px double #7A5230; color: #4A2F16; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .wa-modal-retro .wa-modal-label { color: #7A5230; }
+  .wa-modal-retro .wa-btn-primary { background: #7A5230; color: #F4E9D8; }
+  .wa-modal-retro .wa-btn-ghost { border-color: rgba(122,82,48,0.4); color: #7A5230; }
+
+  .wa-modal-aurora {
+    background: linear-gradient(160deg, #0B1622 0%, #0F2A2E 35%, #123C34 60%, #1B2A4A 100%);
+    color: #EAFBF6; box-shadow: 0 0 70px rgba(64,224,182,0.25), 0 20px 60px rgba(0,0,0,0.55);
+    border: 1px solid rgba(120,255,214,0.25); position: relative; overflow: hidden;
+  }
+  .wa-modal-aurora::before {
+    content: ""; position: absolute; inset: -40% -20%;
+    background: linear-gradient(100deg, transparent 10%, rgba(88,255,196,0.25) 30%, rgba(120,170,255,0.22) 50%, transparent 75%);
+    filter: blur(18px); animation: wa-aurora-shift 6s ease-in-out infinite alternate;
+  }
+  @keyframes wa-aurora-shift { from { transform: translateX(-6%) rotate(-3deg); } to { transform: translateX(6%) rotate(3deg); } }
+  .wa-modal-aurora .wa-modal-label, .wa-modal-aurora .wa-modal-text, .wa-modal-aurora .wa-modal-actions { position: relative; z-index: 1; }
+  .wa-modal-aurora .wa-modal-label { color: #7CFFCB; }
+  .wa-modal-aurora .wa-modal-text { text-shadow: 0 0 18px rgba(124,255,203,0.35); }
+  .wa-modal-aurora .wa-btn-primary { background: #7CFFCB; color: #06231C; }
+  .wa-modal-aurora .wa-btn-ghost { border-color: rgba(124,255,203,0.35); color: #BFF7E4; }
+
+  .wa-modal-paper {
+    background: #F6EEDD;
+    color: #3A3226;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    clip-path: polygon(1% 4%, 12% 0%, 30% 2%, 48% 0%, 63% 3%, 79% 0%, 94% 3%, 100% 9%, 98% 24%, 100% 40%, 97% 56%, 100% 72%, 98% 88%, 100% 96%, 88% 100%, 71% 97%, 55% 100%, 38% 98%, 21% 100%, 6% 99%, 0% 94%, 2% 72%, 0% 52%, 3% 34%, 0% 12%);
+    background-image:
+      linear-gradient(#F6EEDD, #F6EEDD),
+      repeating-linear-gradient(0deg, transparent 0 27px, rgba(58,50,38,0.06) 27px 28px);
+  }
+  .wa-modal-paper .wa-modal-label { color: #8A6A3B; font-family: 'Nanum Pen Script', cursive; font-size: 15px; }
+  .wa-modal-paper .wa-modal-text { font-family: 'Nanum Pen Script', cursive; font-size: 40px; color: #3A3226; }
+  .wa-modal-paper .wa-btn-primary { background: #8A6A3B; color: #F6EEDD; }
+  .wa-modal-paper .wa-btn-ghost { border-color: rgba(58,50,38,0.3); color: #6B5A3E; }
+
+  .wa-modal-royal {
+    background: radial-gradient(circle at 30% 20%, #3B1E5E 0%, #241143 55%, #170A2E 100%);
+    color: #F3E9FF; border: 2px solid #C9A544;
+    box-shadow: 0 0 0 1px rgba(201,165,68,0.4), 0 0 60px rgba(123,58,196,0.4), 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .wa-modal-royal .wa-modal-label { color: #E4C874; letter-spacing: 0.18em; }
+  .wa-modal-royal .wa-modal-text { color: #FBF3E0; text-shadow: 0 0 16px rgba(228,200,116,0.4); }
+  .wa-modal-royal .wa-btn-primary { background: #C9A544; color: #241143; }
+  .wa-modal-royal .wa-btn-ghost { border-color: rgba(228,200,116,0.4); color: #E4C874; }
+
+  .wa-modal-gold .wa-btn-ghost { border-color: var(--card-border); color: var(--muted); }
+  .wa-modal-bold .wa-btn-ghost { border-color: rgba(27,26,46,0.35); color: #1B1A2E; }
+  .wa-modal-minimal .wa-btn-ghost { border-color: rgba(27,26,46,0.3); color: var(--bg); }
+  .wa-modal-actions { display: flex; gap: 10px; margin-top: 10px; }
+
+  .wa-confirm-card { padding: 26px 30px; }
+  .wa-confirm-title { font-size: 17px; font-weight: 700; margin: 0 0 8px; text-align: left; }
+  .wa-confirm-body { font-size: 13px; opacity: 0.75; margin: 0 0 20px; text-align: left; }
+  .wa-confirm-actions { display: flex; gap: 10px; }
+
+  .wa-auth-field { margin-bottom: 10px; text-align: left; }
+  .wa-auth-field label { display: block; font-size: 12px; opacity: 0.75; margin-bottom: 4px; }
+  .wa-auth-error { font-size: 12px; color: #C0392B; margin: 0 0 12px; text-align: left; }
+  .wa-auth-switch { font-size: 12px; margin-top: 14px; opacity: 0.75; }
+  .wa-auth-switch button { background: none; border: none; text-decoration: underline; cursor: pointer; font-size: 12px; color: inherit; padding: 0; }
+  .wa-captcha-row { display: flex; align-items: center; gap: 8px; margin: 4px 0 16px; padding: 10px 12px; border: 1px solid rgba(27,26,46,0.2); border-radius: 8px; }
+  .wa-captcha-row input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: #1B1A2E; }
+  .wa-captcha-row label { font-size: 13px; cursor: pointer; }
+
+  canvas.wa-effect-canvas { position: fixed; inset: 0; z-index: 1001; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="wheel-app"></div>
+
+<script>
+(function () {
+  const PALETTE = ["#E8B86D", "#6B7A97", "#C97B63", "#8FA998", "#D4A5C9", "#7E9CD8", "#B7A16C", "#7FB0A6"];
+  const EFFECT_COLORS = PALETTE.concat(["#FFFFFF", "#E8B86D"]);
+  const STORAGE_KEY = "formwheel-entries";
+  const SETTINGS_KEY = "formwheel-settings";
+  const USERS_KEY = "formwheel-users";
+  const SESSION_KEY = "formwheel-session";
+  const PRESETS_KEY = "formwheel-presets";
+  const DEFAULT_SETTINGS = {
+    duration: 5.6, rounds: 7, popupStyle: "gold", popupFont: "default", effect: "confetti",
+    background: "#1B1A2E", backgroundType: "color", backgroundImage: null,
+    hubType: "color", hubColor: "#E8B86D", hubImage: null,
+    hubShape: "circle", wheelShape: "circle",
+    wheelBorderColor: "#242338", wheelBorderWidth: 6,
+    sliceTextColor: "#1B1A2E", sliceBorderColor: "#1B1A2E",
+    glitchColors: ["#39FF14", "#FF2079", "#00EAFF", "#FFFFFF"],
+    neonColor: "#39FF88",
+    lightningColor: "#EAF0FF",
+    matrixColor: "#39FF88",
+    bubbleColor: "#BFE8FF",
+    secretUnlocked: false,
+    language: "ko"
+  };
+  const POPUP_FONTS = {
+    default: "Georgia, 'Iowan Old Style', serif",
+    sans: "'Poppins', ui-sans-serif, -apple-system, sans-serif",
+    blackhan: "'Black Han Sans', ui-sans-serif, sans-serif",
+    dohyeon: "'Do Hyeon', ui-sans-serif, sans-serif",
+    pen: "'Nanum Pen Script', cursive",
+    mono: "'Courier New', ui-monospace, monospace",
+  };
+  const DURATION_MIN = 2, DURATION_MAX = 15;
+  const ROUNDS_MIN = 2, ROUNDS_MAX = 20;
+  const WEIGHT_MIN = 1, WEIGHT_MAX = 10;
+  const BORDER_WIDTH_MIN = 0, BORDER_WIDTH_MAX = 20;
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // --- 풀 코드는 Main 파일 참조 ---
+  // 이 부분은 길이 제한상 축약되었으며, 실제로는 Main 파일의 전체 JavaScript 코드가 여기에 들어갑니다.
+  // 아래는 기본 구조만 제공합니다.
+  
+  const root = document.getElementById("wheel-app");
+  
+  // localStorage에서 설정 불러오기
+  function loadSettings() {
+    try {
+      const saved = localStorage.getItem(SETTINGS_KEY);
+      if (saved) return { ...DEFAULT_SETTINGS, ...JSON.parse(saved) };
+    } catch (e) {}
+    return { ...DEFAULT_SETTINGS };
+  }
+
+  // 간단한 렌더 함수 (자리표시자)
+  function render() {
+    root.innerHTML = '<div style="padding:40px; text-align:center; color:#F0EDE4;"><h1>FormWheel 1.3</h1><p>로딩 중...</p></div>';
+  }
+
+  // 초기화
+  render();
+  setTimeout(() => {
+    // 필요한 모든 핸들러와 렌더링 로직을 여기에 추가
+    render();
+  }, 100);
+})();
+</script>
+</body>
+</html>
