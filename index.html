@@ -385,6 +385,8 @@
       shareBtn: "공유 코드 만들기", shareCodeLabel: "공유 코드", shareCopyBtn: "코드 복사", shareCopied: "복사됨 ✓",
       shareNeedEntries: "항목을 먼저 추가해주세요.",
       sharedBannerText: "공유받은 돌림판이에요. 자유롭게 돌려보세요!",
+      shareQrHint: "코드를 직접 입력하기 번거로우면, 이 QR코드를 스캔해도 똑같이 열려요.",
+      shareLinkCopyBtn: "링크 복사",
       loadCodeTitle: "코드로 불러오기",
       loadCodeHint: "친구가 알려준 공유 코드를 입력하면 그 돌림판을 그대로 불러와요.",
       loadCodePlaceholder: "코드 입력 (예: AB12CD)",
@@ -475,6 +477,8 @@
       shareBtn: "Create Share Code", shareCodeLabel: "Share Code", shareCopyBtn: "Copy Code", shareCopied: "Copied ✓",
       shareNeedEntries: "Add some items first.",
       sharedBannerText: "This is a shared wheel — feel free to spin it!",
+      shareQrHint: "If typing the code is a hassle, scanning this QR code opens the same wheel.",
+      shareLinkCopyBtn: "Copy Link",
       loadCodeTitle: "Load by Code",
       loadCodeHint: "Enter a share code someone gave you to load their wheel exactly as they set it up.",
       loadCodePlaceholder: "Enter code (e.g. AB12CD)",
@@ -533,7 +537,10 @@
 
   // --- 공유 상태 ---
   let shareCodeValue = "";
+  let shareLinkValue = "";
+  let shareQrUrl = "";
   let shareCopyFeedback = false;
+  let shareLinkCopyFeedback = false;
   let shareBusy = false;
   let sharedBannerVisible = false;
   let loadCodeInputValue = "";
@@ -2081,6 +2088,20 @@
   }
 
   // ---------- 공유 (짧은 코드로 돌림판 내보내기/가져오기) ----------
+  function buildShareUrl(code) {
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set("wheel", code);
+      return url.toString();
+    } catch (e) {
+      return "?wheel=" + code;
+    }
+  }
+
+  function buildQrImageUrl(text) {
+    return "https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=" + encodeURIComponent(text);
+  }
+
   async function createShareCode() {
     if (entries.length === 0 || shareBusy) return;
     shareBusy = true;
@@ -2094,6 +2115,8 @@
     await storageSet(SHARE_PREFIX + code, JSON.stringify(payload), true);
     shareBusy = false;
     shareCodeValue = code;
+    shareLinkValue = buildShareUrl(code);
+    shareQrUrl = buildQrImageUrl(shareLinkValue);
     render();
   }
 
@@ -2104,6 +2127,16 @@
       shareCopyFeedback = true;
       render();
       setTimeout(() => { shareCopyFeedback = false; render(); }, 1500);
+    }
+  }
+
+  async function copyShareLink() {
+    if (!shareLinkValue) return;
+    const ok = await copyTextToClipboard(shareLinkValue);
+    if (ok) {
+      shareLinkCopyFeedback = true;
+      render();
+      setTimeout(() => { shareLinkCopyFeedback = false; render(); }, 1500);
     }
   }
 
@@ -2340,6 +2373,14 @@
                 ? '<div class="wa-form-row" style="align-items:center;">' +
                     '<div class="wa-input" style="text-align:center;font-size:20px;font-weight:700;letter-spacing:0.12em;font-family:\'Courier New\',ui-monospace,monospace;background:#1B1A2E;">' + escapeHtml(shareCodeValue) + '</div>' +
                     '<button class="wa-btn wa-btn-ghost" id="wa-share-copy-btn">' + (shareCopyFeedback ? t("shareCopied") : t("shareCopyBtn")) + '</button>' +
+                  '</div>' +
+                  '<div style="text-align:center;margin:6px 0 8px;">' +
+                    '<img src="' + escapeAttr(shareQrUrl) + '" alt="QR" width="150" height="150" style="border-radius:10px;background:#FFFFFF;padding:8px;">' +
+                    '<p class="wa-hint" style="margin:8px 0 0;">' + t("shareQrHint") + '</p>' +
+                  '</div>' +
+                  '<div class="wa-form-row">' +
+                    '<input class="wa-input" type="text" readonly value="' + escapeAttr(shareLinkValue) + '" onclick="this.select()" style="font-size:12px;">' +
+                    '<button class="wa-btn wa-btn-ghost" id="wa-share-link-copy-btn">' + (shareLinkCopyFeedback ? t("shareCopied") : t("shareLinkCopyBtn")) + '</button>' +
                   '</div>'
                 : '') +
               '<div style="height:12px;"></div>' +
@@ -2589,6 +2630,8 @@
     if (shareBtn) shareBtn.addEventListener("click", createShareCode);
     const shareCopyBtn = document.getElementById("wa-share-copy-btn");
     if (shareCopyBtn) shareCopyBtn.addEventListener("click", copyShareCode);
+    const shareLinkCopyBtn = document.getElementById("wa-share-link-copy-btn");
+    if (shareLinkCopyBtn) shareLinkCopyBtn.addEventListener("click", copyShareLink);
 
     const loadCodeInput = document.getElementById("wa-load-code-input");
     if (loadCodeInput) {
