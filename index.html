@@ -141,7 +141,7 @@ h1{
 
 .cards{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:18px;
 }
 
@@ -192,6 +192,10 @@ h1{
 
 .btn.blue{
   background:#2867e8;
+}
+
+.btn.purple{
+  background:#7c3aed;
 }
 
 .btn.disabled{
@@ -265,6 +269,12 @@ footer{
   font-size:12px;
 }
 
+@media(max-width:850px){
+  .cards{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
 @media(max-width:650px){
   header{
     padding:0 14px;
@@ -328,6 +338,12 @@ footer{
        rel="noopener"
        onclick="return true;">
       Wheel
+    </a>
+    <a href="https://semicolonxss.github.io/Formwheel_Quiz"
+       target="_blank"
+       rel="noopener"
+       onclick="return true;">
+      Quiz
     </a>
   </nav>
 </header>
@@ -394,6 +410,27 @@ footer{
           class="btn blue"
           onclick="return true;">
           Wheel로 이동 →
+        </a>
+      </div>
+
+
+      <div class="card">
+        <div class="icon">🧠</div>
+
+        <h2>Quiz</h2>
+
+        <p>
+          실시간으로 참가자들과
+          함께 즐기는 퀴즈를 진행하세요.
+        </p>
+
+        <a
+          href="https://semicolonxss.github.io/Formwheel_Quiz"
+          target="_blank"
+          rel="noopener"
+          class="btn purple"
+          onclick="return true;">
+          Quiz로 이동 →
         </a>
       </div>
 
