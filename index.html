@@ -3,31 +3,58 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f8fc">
 <title>FormWheel</title>
 
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
+html{scroll-behavior:smooth}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
   "Noto Sans KR",Arial,sans-serif;
   background:#f7f8fc;
   color:#15171c;
+  overflow-x:hidden;
 }
 a{text-decoration:none;color:inherit}
+
+body:before{
+  content:"";
+  position:fixed;
+  width:520px;
+  height:520px;
+  top:-260px;
+  left:-180px;
+  background:radial-gradient(circle,rgba(40,103,232,.12),transparent 68%);
+  pointer-events:none;
+  z-index:-1;
+}
+body:after{
+  content:"";
+  position:fixed;
+  width:500px;
+  height:500px;
+  right:-250px;
+  top:280px;
+  background:radial-gradient(circle,rgba(124,58,237,.09),transparent 68%);
+  pointer-events:none;
+  z-index:-1;
+}
 
 header{
   position:sticky;
   top:0;
-  z-index:10;
-  height:68px;
-  background:rgba(255,255,255,.94);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid #e8e9ee;
+  z-index:100;
+  height:70px;
+  background:rgba(255,255,255,.82);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(224,226,234,.9);
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 20px;
+  padding:0 24px;
 }
 
 .logo{
@@ -35,12 +62,14 @@ header{
   align-items:center;
   gap:8px;
   font-size:21px;
-  font-weight:800;
+  font-weight:850;
   letter-spacing:-1px;
+  flex-shrink:0;
 }
 
 .logo .form{color:#2867e8}
-.logo .wheel{color:#666}
+.logo .wheel{color:#555}
+
 .logoIcon{
   width:28px;
   height:28px;
@@ -48,6 +77,7 @@ header{
   border-radius:50%;
   position:relative;
   display:inline-block;
+  box-shadow:0 3px 12px rgba(40,103,232,.18);
 }
 .logoIcon:before,
 .logoIcon:after{
@@ -72,109 +102,249 @@ header{
 nav{
   display:flex;
   align-items:center;
-  gap:6px;
+  gap:4px;
 }
 
 nav a{
   padding:9px 12px;
   border-radius:10px;
-  font-size:14px;
-  font-weight:700;
-  color:#555;
+  font-size:13px;
+  font-weight:750;
+  color:#666a73;
+  transition:.18s ease;
 }
-
 nav a:hover{
   background:#f0f2f7;
   color:#111;
 }
+nav a.navBattle{
+  color:#ea650e;
+  background:#fff5ed;
+}
+nav a.navBattle:hover{
+  background:#ffead9;
+}
 
 .construction{
-  font-size:10px;
+  font-size:9px;
   color:#999;
   margin-left:3px;
+  vertical-align:middle;
 }
 
 main{
-  max-width:1100px;
+  max-width:1160px;
   margin:0 auto;
-  padding:70px 20px 80px;
+  padding:68px 24px 80px;
 }
+
+.page{display:none}
+.page.active{display:block}
 
 .hero{
   text-align:center;
-  padding:30px 0 55px;
+  padding:26px 0 58px;
+  position:relative;
+}
+
+.heroGlow{
+  position:absolute;
+  left:50%;
+  top:0;
+  width:440px;
+  height:220px;
+  transform:translateX(-50%);
+  background:radial-gradient(ellipse,rgba(40,103,232,.13),transparent 70%);
+  filter:blur(4px);
+  pointer-events:none;
+  z-index:-1;
 }
 
 .badge{
-  display:inline-block;
-  padding:7px 12px;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:8px 13px;
   border-radius:999px;
   background:#eaf1ff;
   color:#2867e8;
-  font-size:12px;
-  font-weight:800;
-  margin-bottom:18px;
+  border:1px solid #dce8ff;
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.7px;
+  margin-bottom:20px;
+}
+.badgeDot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#2867e8;
+  box-shadow:0 0 0 4px rgba(40,103,232,.10);
 }
 
 h1{
   margin:0;
-  font-size:clamp(38px,9vw,70px);
-  line-height:1.05;
-  letter-spacing:-3px;
+  font-size:clamp(48px,9vw,82px);
+  line-height:1;
+  letter-spacing:-4.5px;
+  font-weight:900;
+  background:linear-gradient(120deg,#2867e8 0%,#15171c 45%,#7c3aed 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
 }
 
 .heroTitle{
-  margin-top:22px;
-  font-size:clamp(25px,6vw,42px);
-  font-weight:800;
-  line-height:1.3;
-  letter-spacing:-1.8px;
+  margin-top:24px;
+  font-size:clamp(26px,5vw,44px);
+  font-weight:850;
+  line-height:1.28;
+  letter-spacing:-2px;
 }
 
 .heroText{
   margin:18px auto 0;
-  max-width:600px;
-  color:#666;
-  line-height:1.7;
+  max-width:620px;
+  color:#6c7079;
+  line-height:1.75;
   font-size:15px;
+}
+
+.heroActions{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:28px;
+  flex-wrap:wrap;
+}
+
+.heroBtn{
+  min-height:48px;
+  padding:0 22px;
+  border-radius:14px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  font-weight:800;
+  transition:.2s ease;
+}
+.heroBtn.primary{
+  color:#fff;
+  background:#15171c;
+  box-shadow:0 10px 22px rgba(21,23,28,.14);
+}
+.heroBtn.secondary{
+  color:#2867e8;
+  background:#fff;
+  border:1px solid #dfe5f2;
+}
+.heroBtn:hover{
+  transform:translateY(-2px);
+}
+.heroBtn.primary:hover{
+  box-shadow:0 14px 28px rgba(21,23,28,.18);
+}
+
+.sectionLabel{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin:0 2px 14px;
+}
+.sectionLabel strong{
+  font-size:14px;
+  letter-spacing:-.2px;
+}
+.sectionLabel span{
+  color:#9a9da5;
+  font-size:12px;
 }
 
 .cards{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:18px;
+  gap:16px;
 }
 
 .card{
-  background:#fff;
-  border:1px solid #e7e8ed;
-  border-radius:22px;
-  padding:30px;
-  box-shadow:0 10px 30px rgba(0,0,0,.04);
-  transition:.2s;
+  position:relative;
+  overflow:hidden;
+  background:rgba(255,255,255,.92);
+  border:1px solid #e5e7ed;
+  border-radius:23px;
+  padding:28px;
+  min-height:310px;
+  box-shadow:0 12px 35px rgba(20,25,40,.045);
+  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
+}
+.card:before{
+  content:"";
+  position:absolute;
+  width:150px;
+  height:150px;
+  right:-80px;
+  top:-80px;
+  border-radius:50%;
+  background:var(--soft);
+  pointer-events:none;
+}
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 45px rgba(20,25,40,.09);
+  border-color:#dce0e9;
 }
 
-.card:hover{
-  transform:translateY(-3px);
-  box-shadow:0 15px 35px rgba(0,0,0,.08);
-}
+.card.form{--accent:#15171c;--soft:rgba(21,23,28,.055)}
+.card.wheel{--accent:#2867e8;--soft:rgba(40,103,232,.10)}
+.card.quiz{--accent:#7c3aed;--soft:rgba(124,58,237,.10)}
+.card.battle{--accent:#f97316;--soft:rgba(249,115,22,.12)}
 
 .icon{
-  font-size:38px;
-  margin-bottom:18px;
+  width:56px;
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:17px;
+  background:var(--soft);
+  font-size:30px;
+  margin-bottom:22px;
 }
 
 .card h2{
-  margin:0 0 10px;
+  margin:0 0 9px;
   font-size:25px;
-  letter-spacing:-1px;
+  letter-spacing:-1.1px;
+}
+.card p{
+  margin:0 0 25px;
+  color:#70737b;
+  line-height:1.65;
+  font-size:13.5px;
+  min-height:66px;
 }
 
-.card p{
-  margin:0 0 24px;
-  color:#70737b;
-  line-height:1.6;
-  font-size:14px;
+.status{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  margin-bottom:17px;
+  color:#92959d;
+  font-size:10px;
+  font-weight:750;
+}
+.statusDot{
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:#b8bbc2;
+}
+.card.battle .status{
+  color:#e56b18;
+}
+.card.battle .statusDot{
+  background:#f97316;
 }
 
 .btn{
@@ -182,76 +352,104 @@ h1{
   align-items:center;
   justify-content:center;
   min-height:44px;
-  padding:0 18px;
+  padding:0 17px;
   border-radius:12px;
   background:#15171c;
   color:#fff;
-  font-weight:700;
-  font-size:14px;
+  font-weight:750;
+  font-size:13px;
+  transition:.18s ease;
 }
-
-.btn.blue{
-  background:#2867e8;
+.btn:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.05);
 }
-
-.btn.purple{
-  background:#7c3aed;
-}
-
-.btn.orange{
-  background:#f97316;
-}
+.btn.blue{background:#2867e8}
+.btn.purple{background:#7c3aed}
+.btn.orange{background:#f97316}
 
 .notice{
   margin-top:18px;
-  padding:16px 18px;
-  background:#fff;
-  border:1px solid #e7e8ed;
+  padding:15px 18px;
+  background:rgba(255,255,255,.75);
+  border:1px solid #e5e7ed;
   border-radius:15px;
-  color:#777;
-  font-size:13px;
+  color:#777b84;
+  font-size:12px;
   text-align:center;
 }
 
-.page{
-  display:none;
+.features{
+  margin-top:58px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
 }
-
-.page.active{
+.feature{
+  background:rgba(255,255,255,.62);
+  border:1px solid #e8e9ef;
+  border-radius:18px;
+  padding:20px;
+}
+.featureIcon{
+  font-size:20px;
+  margin-bottom:10px;
+}
+.feature strong{
   display:block;
-}
-
-.back{
-  display:inline-block;
-  margin-bottom:24px;
-  color:#666;
   font-size:14px;
-  font-weight:700;
+  margin-bottom:6px;
+}
+.feature span{
+  color:#777b83;
+  font-size:12px;
+  line-height:1.6;
 }
 
 .formBox{
-  background:#fff;
-  border:1px solid #e7e8ed;
-  border-radius:22px;
-  padding:35px;
+  max-width:720px;
+  margin:40px auto 0;
+  background:rgba(255,255,255,.94);
+  border:1px solid #e5e7ed;
+  border-radius:25px;
+  padding:45px 35px;
   text-align:center;
+  box-shadow:0 15px 40px rgba(20,25,40,.05);
 }
-
 .formBox h2{
   margin:0 0 12px;
-  font-size:28px;
+  font-size:30px;
+  letter-spacing:-1px;
+}
+.formBox p{
+  color:#777b83;
+  line-height:1.7;
+  margin:0 0 24px;
 }
 
-.formBox p{
-  color:#777;
-  line-height:1.7;
+.back{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  margin-bottom:12px;
+  color:#666a73;
+  font-size:13px;
+  font-weight:750;
+  padding:8px 10px;
+  border-radius:9px;
 }
+.back:hover{background:#eef0f5}
 
 footer{
   text-align:center;
-  padding:30px 20px;
-  color:#aaa;
-  font-size:12px;
+  padding:32px 20px 40px;
+  color:#a4a7ae;
+  font-size:11px;
+}
+.footerLogo{
+  font-weight:800;
+  color:#777b83;
+  margin-bottom:5px;
 }
 
 @media(max-width:1050px){
@@ -260,48 +458,95 @@ footer{
   }
 }
 
-@media(max-width:650px){
+@media(max-width:700px){
   header{
-    padding:0 14px;
+    height:auto;
+    min-height:64px;
+    padding:10px 14px;
+    gap:8px;
   }
-
-  .logo{
-    font-size:18px;
-  }
-
+  .logo{font-size:18px}
   .logoIcon{
     width:24px;
     height:24px;
     border-width:3px;
   }
-
   nav{
-    gap:2px;
+    gap:1px;
+    overflow-x:auto;
+    scrollbar-width:none;
   }
-
+  nav::-webkit-scrollbar{display:none}
   nav a{
     padding:8px 6px;
-    font-size:11px;
+    font-size:10px;
+    white-space:nowrap;
   }
+  .construction{font-size:8px}
 
   main{
-    padding:45px 16px 60px;
+    padding:42px 16px 55px;
   }
-
   .hero{
-    padding:20px 0 40px;
+    padding:15px 0 44px;
+  }
+  .heroGlow{
+    width:330px;
+  }
+  h1{
+    letter-spacing:-3px;
+  }
+  .heroTitle{
+    letter-spacing:-1.4px;
+  }
+  .heroText{
+    font-size:14px;
   }
 
   .cards{
     grid-template-columns:1fr;
+    gap:13px;
+  }
+  .card{
+    min-height:auto;
+    padding:24px;
+  }
+  .card p{
+    min-height:auto;
   }
 
-  .card{
-    padding:25px;
+  .features{
+    grid-template-columns:1fr;
+    margin-top:42px;
+  }
+
+  .notice{
+    line-height:1.6;
   }
 
   .formBox{
-    padding:25px 20px;
+    margin-top:25px;
+    padding:35px 20px;
+  }
+}
+
+@media(max-width:420px){
+  header{
+    flex-wrap:wrap;
+  }
+  nav{
+    width:100%;
+    justify-content:space-between;
+  }
+  nav a{
+    flex:1;
+    text-align:center;
+  }
+  .heroActions{
+    flex-direction:column;
+  }
+  .heroBtn{
+    width:100%;
   }
 }
 </style>
@@ -310,7 +555,7 @@ footer{
 <body>
 
 <header>
-  <a href="#" class="logo" onclick="showPage('home');return false;">
+  <a href="#" class="logo" onclick="showPage('home');return false;" aria-label="FormWheel Home">
     <span class="form">Form</span>
     <span class="logoIcon"></span>
     <span class="wheel">Wheel</span>
@@ -324,25 +569,21 @@ footer{
     </a>
 
     <a href="https://semicolonxss.github.io/Formwheel_Wheel/"
-       target="_blank"
-       rel="noopener">
+       target="_blank" rel="noopener">
       Wheel
     </a>
 
     <a href="https://semicolonxss.github.io/Formwheel_Quiz"
-       target="_blank"
-       rel="noopener">
+       target="_blank" rel="noopener">
       Quiz
     </a>
 
     <a href="https://semicolonxss.github.io/Formwheel_Battle"
-       target="_blank"
-       rel="noopener">
+       target="_blank" rel="noopener">
       Battle
     </a>
   </nav>
 </header>
-
 
 <main>
 
@@ -350,111 +591,133 @@ footer{
   <section id="home" class="page active">
 
     <div class="hero">
-      <div class="badge">FORMWHEEL</div>
+      <div class="heroGlow"></div>
+
+      <div class="badge">
+        <span class="badgeDot"></span>
+        FORMWHEEL
+      </div>
 
       <h1>FormWheel</h1>
 
       <div class="heroTitle">
-        설문에서 추첨까지,<br>
-        하나의 Wheel
+        만들고 · 참여하고 ·<br>
+        대결하고 · 뽑고
       </div>
 
       <p class="heroText">
-        Form에서 설문을 만들고,<br>
-        모인 응답을 Wheel에서 추첨하세요.
+        설문부터 랜덤 추첨, 실시간 퀴즈와 배틀까지.<br>
+        친구들과 함께 즐기는 다양한 경험을 한곳에서 만나보세요.
       </p>
+
+      <div class="heroActions">
+        <a href="https://semicolonxss.github.io/Formwheel_Form"
+           target="_blank" rel="noopener" class="heroBtn primary">
+          📝 Form 시작하기
+        </a>
+
+        <a href="https://semicolonxss.github.io/Formwheel_Wheel/"
+           target="_blank" rel="noopener" class="heroBtn secondary">
+          🎡 Wheel 시작하기
+        </a>
+      </div>
     </div>
 
+    <div class="sectionLabel">
+      <strong>FormWheel 서비스</strong>
+      <span>Choose your experience</span>
+    </div>
 
     <div class="cards">
 
-      <div class="card">
+      <div class="card form">
         <div class="icon">📝</div>
-
+        <div class="status"><span class="statusDot"></span> Beta testing</div>
         <h2>Form</h2>
-
         <p>
           설문을 만들고 공유 링크를 통해
           다른 사람의 응답을 받아보세요.
         </p>
 
         <a href="https://semicolonxss.github.io/Formwheel_Form"
-           target="_blank"
-           rel="noopener"
-           class="btn">
+           target="_blank" rel="noopener" class="btn">
           Beta testing →
         </a>
       </div>
 
-
-      <div class="card">
+      <div class="card wheel">
         <div class="icon">🎡</div>
-
+        <div class="status"><span class="statusDot"></span> Available</div>
         <h2>Wheel</h2>
-
         <p>
           설문 응답을 이용해서
           간편하게 랜덤 추첨을 진행하세요.
         </p>
 
-        <a
-          href="https://semicolonxss.github.io/Formwheel_Wheel/"
-          target="_blank"
-          rel="noopener"
-          class="btn blue">
+        <a href="https://semicolonxss.github.io/Formwheel_Wheel/"
+           target="_blank" rel="noopener" class="btn blue">
           Wheel로 이동 →
         </a>
       </div>
 
-
-      <div class="card">
+      <div class="card quiz">
         <div class="icon">🧠</div>
-
+        <div class="status"><span class="statusDot"></span> Available</div>
         <h2>Quiz</h2>
-
         <p>
           실시간으로 참가자들과
           함께 즐기는 퀴즈를 진행하세요.
         </p>
 
-        <a
-          href="https://semicolonxss.github.io/Formwheel_Quiz"
-          target="_blank"
-          rel="noopener"
-          class="btn purple">
+        <a href="https://semicolonxss.github.io/Formwheel_Quiz"
+           target="_blank" rel="noopener" class="btn purple">
           Quiz로 이동 →
         </a>
       </div>
 
-
-      <div class="card">
+      <div class="card battle">
         <div class="icon">⚔️</div>
-
+        <div class="status"><span class="statusDot"></span> New experience</div>
         <h2>Battle</h2>
-
         <p>
           참가자들과 실시간으로 대결하며
           재미있는 배틀을 진행하세요.
         </p>
 
-        <a
-          href="https://semicolonxss.github.io/Formwheel_Battle"
-          target="_blank"
-          rel="noopener"
-          class="btn orange">
+        <a href="https://semicolonxss.github.io/Formwheel_Battle"
+           target="_blank" rel="noopener" class="btn orange">
           Battle로 이동 →
         </a>
       </div>
 
     </div>
 
-
     <div class="notice">
-      🎡 Wheel은 GitHub FormWheel 최신 릴리즈로 이동합니다.
+      🎡 Wheel은 FormWheel의 랜덤 추첨 기능을 제공합니다.
+      &nbsp;·&nbsp; 🧠 Quiz와 ⚔️ Battle은 친구들과 함께 즐겨보세요.
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <div class="featureIcon">🔗</div>
+        <strong>간편한 공유</strong>
+        <span>링크 하나로 친구들과 Form, Quiz, Battle을 공유할 수 있어요.</span>
+      </div>
+
+      <div class="feature">
+        <div class="featureIcon">⚡</div>
+        <strong>빠르게 시작</strong>
+        <span>복잡한 과정 없이 원하는 기능을 골라 바로 시작할 수 있어요.</span>
+      </div>
+
+      <div class="feature">
+        <div class="featureIcon">🎮</div>
+        <strong>함께 즐기기</strong>
+        <span>설문뿐 아니라 퀴즈와 배틀까지 다양한 방식으로 참여해보세요.</span>
+      </div>
     </div>
 
   </section>
-
 
   <!-- FORM -->
   <section id="form" class="page">
@@ -466,21 +729,19 @@ footer{
 
     <div class="formBox">
 
-      <div class="icon">📝</div>
+      <div class="icon" style="margin:0 auto 20px;background:rgba(21,23,28,.055)">📝</div>
 
       <h2>Form</h2>
 
       <p>
-        여기는 Form 페이지 자리입니다.
+        설문을 만들고 사람들의 응답을 받아보세요.
         <br><br>
         현재 베타 테스트 중입니다.
       </p>
 
       <a href="https://semicolonxss.github.io/Formwheel_Form"
-         target="_blank"
-         rel="noopener"
-         class="btn">
-        Beta testing
+         target="_blank" rel="noopener" class="btn">
+        Beta testing →
       </a>
 
     </div>
@@ -489,11 +750,10 @@ footer{
 
 </main>
 
-
 <footer>
-  FormWheel
+  <div class="footerLogo">FormWheel</div>
+  <div>Make · Join · Battle · Spin</div>
 </footer>
-
 
 <script>
 function showPage(page){
