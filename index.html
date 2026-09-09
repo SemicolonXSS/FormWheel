@@ -95,7 +95,7 @@ nav a:hover{
 }
 
 main{
-  max-width:1000px;
+  max-width:1100px;
   margin:0 auto;
   padding:70px 20px 80px;
 }
@@ -141,7 +141,7 @@ h1{
 
 .cards{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(4,1fr);
   gap:18px;
 }
 
@@ -198,10 +198,8 @@ h1{
   background:#7c3aed;
 }
 
-.btn.disabled{
-  background:#eceef3;
-  color:#999;
-  cursor:default;
+.btn.orange{
+  background:#f97316;
 }
 
 .notice{
@@ -249,19 +247,6 @@ h1{
   line-height:1.7;
 }
 
-.wheelBox{
-  background:#fff;
-  border:1px solid #e7e8ed;
-  border-radius:22px;
-  padding:35px;
-  text-align:center;
-}
-
-.wheelBox h2{
-  margin:0 0 12px;
-  font-size:28px;
-}
-
 footer{
   text-align:center;
   padding:30px 20px;
@@ -269,7 +254,7 @@ footer{
   font-size:12px;
 }
 
-@media(max-width:850px){
+@media(max-width:1050px){
   .cards{
     grid-template-columns:repeat(2,1fr);
   }
@@ -290,9 +275,13 @@ footer{
     border-width:3px;
   }
 
+  nav{
+    gap:2px;
+  }
+
   nav a{
-    padding:8px 7px;
-    font-size:12px;
+    padding:8px 6px;
+    font-size:11px;
   }
 
   main{
@@ -311,8 +300,7 @@ footer{
     padding:25px;
   }
 
-  .formBox,
-  .wheelBox{
+  .formBox{
     padding:25px 20px;
   }
 }
@@ -330,20 +318,27 @@ footer{
 
   <nav>
     <a href="#" onclick="showPage('home');return false;">Home</a>
+
     <a href="#" onclick="showPage('form');return false;">
       Form<span class="construction">제작중</span>
     </a>
+
     <a href="https://semicolonxss.github.io/Formwheel_Wheel/"
        target="_blank"
-       rel="noopener"
-       onclick="return true;">
+       rel="noopener">
       Wheel
     </a>
+
     <a href="https://semicolonxss.github.io/Formwheel_Quiz"
        target="_blank"
-       rel="noopener"
-       onclick="return true;">
+       rel="noopener">
       Quiz
+    </a>
+
+    <a href="https://semicolonxss.github.io/Formwheel_Battle"
+       target="_blank"
+       rel="noopener">
+      Battle
     </a>
   </nav>
 </header>
@@ -386,8 +381,7 @@ footer{
         <a href="https://semicolonxss.github.io/Formwheel_Form"
            target="_blank"
            rel="noopener"
-           class="btn"
-           onclick="return true;">
+           class="btn">
           Beta testing →
         </a>
       </div>
@@ -407,8 +401,7 @@ footer{
           href="https://semicolonxss.github.io/Formwheel_Wheel/"
           target="_blank"
           rel="noopener"
-          class="btn blue"
-          onclick="return true;">
+          class="btn blue">
           Wheel로 이동 →
         </a>
       </div>
@@ -428,9 +421,28 @@ footer{
           href="https://semicolonxss.github.io/Formwheel_Quiz"
           target="_blank"
           rel="noopener"
-          class="btn purple"
-          onclick="return true;">
+          class="btn purple">
           Quiz로 이동 →
+        </a>
+      </div>
+
+
+      <div class="card">
+        <div class="icon">⚔️</div>
+
+        <h2>Battle</h2>
+
+        <p>
+          참가자들과 실시간으로 대결하며
+          재미있는 배틀을 진행하세요.
+        </p>
+
+        <a
+          href="https://semicolonxss.github.io/Formwheel_Battle"
+          target="_blank"
+          rel="noopener"
+          class="btn orange">
+          Battle로 이동 →
         </a>
       </div>
 
@@ -461,7 +473,7 @@ footer{
       <p>
         여기는 Form 페이지 자리입니다.
         <br><br>
-        다음 단계에서 설문 제작 기능을 연결할 예정입니다.
+        현재 베타 테스트 중입니다.
       </p>
 
       <a href="https://semicolonxss.github.io/Formwheel_Form"
