@@ -117,6 +117,25 @@ nav a:hover{
   background:#f0f2f7;
   color:#111;
 }
+
+.gamesMenu{position:relative}
+.gamesMenu summary{
+  list-style:none;cursor:pointer;padding:9px 12px;border-radius:10px;
+  font-size:13px;font-weight:750;color:#666a73;transition:.18s ease;
+}
+.gamesMenu summary::-webkit-details-marker{display:none}
+.gamesMenu summary:after{content:"⌄";margin-left:5px;font-size:10px}
+.gamesMenu[open] summary,.gamesMenu summary:hover{background:#f0f2f7;color:#111}
+.gamesDropdown{
+  position:absolute;top:calc(100% + 8px);right:0;min-width:155px;padding:7px;
+  background:rgba(255,255,255,.97);border:1px solid #e5e7ed;border-radius:14px;
+  box-shadow:0 14px 35px rgba(20,25,40,.12);backdrop-filter:blur(14px);
+}
+.gamesDropdown a{
+  display:block;padding:10px 11px;border-radius:9px;color:#666a73;
+  font-size:12px;font-weight:750;white-space:nowrap;
+}
+.gamesDropdown a:hover{background:#f0f2f7;color:#111}
 nav a.navBattle{
   color:#ea650e;
   background:#fff5ed;
@@ -263,7 +282,7 @@ h1{
 
 .cards{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:16px;
 }
 
@@ -299,6 +318,9 @@ h1{
 .card.wheel{--accent:#2867e8;--soft:rgba(40,103,232,.10)}
 .card.quiz{--accent:#7c3aed;--soft:rgba(124,58,237,.10)}
 .card.battle{--accent:#f97316;--soft:rgba(249,115,22,.12)}
+.card.bomb{--accent:#dc2626;--soft:rgba(220,38,38,.10)}
+.card.bomb .status{color:#dc2626}
+.card.bomb .statusDot{background:#ef4444}
 
 .icon{
   width:56px;
@@ -482,6 +504,11 @@ footer{
     font-size:10px;
     white-space:nowrap;
   }
+  .gamesMenu summary{
+    padding:8px 6px;
+    font-size:10px;
+    white-space:nowrap;
+  }
   .construction{font-size:8px}
 
   main{
@@ -578,10 +605,13 @@ footer{
       Quiz
     </a>
 
-    <a href="https://semicolonxss.github.io/Formwheel_Battle"
-       target="_blank" rel="noopener">
-      Battle
-    </a>
+    <details class="gamesMenu">
+      <summary>Games</summary>
+      <div class="gamesDropdown">
+        <a href="https://semicolonxss.github.io/Formwheel_Battle" target="_blank" rel="noopener">⚔️ Battle</a>
+        <a href="https://semicolonxss.github.io/Formwheel_Bomb/" target="_blank" rel="noopener">💣 Bomb</a>
+      </div>
+    </details>
   </nav>
 </header>
 
@@ -690,18 +720,33 @@ footer{
         </a>
       </div>
 
+      <div class="card bomb">
+        <div class="icon">💣</div>
+        <div class="status"><span class="statusDot"></span> New game</div>
+        <h2>Bomb</h2>
+        <p>
+          폭탄을 다른 참가자에게 넘기며
+          마지막까지 살아남아보세요.
+        </p>
+
+        <a href="https://semicolonxss.github.io/Formwheel_Bomb/"
+           target="_blank" rel="noopener" class="btn orange">
+          Bomb로 이동 →
+        </a>
+      </div>
+
     </div>
 
     <div class="notice">
       🎡 Wheel은 FormWheel의 랜덤 추첨 기능을 제공합니다.
-      &nbsp;·&nbsp; 🧠 Quiz와 ⚔️ Battle은 친구들과 함께 즐겨보세요.
+      &nbsp;·&nbsp; 🎮 Games에서 Battle과 Bomb를 친구들과 함께 즐겨보세요.
     </div>
 
     <div class="features">
       <div class="feature">
         <div class="featureIcon">🔗</div>
         <strong>간편한 공유</strong>
-        <span>링크 하나로 친구들과 Form, Quiz, Battle을 공유할 수 있어요.</span>
+        <span>링크 하나로 친구들과 Form, Quiz, Battle, Bomb를 공유할 수 있어요.</span>
       </div>
 
       <div class="feature">
@@ -752,7 +797,7 @@ footer{
 
 <footer>
   <div class="footerLogo">FormWheel</div>
-  <div>Make · Join · Battle · Spin</div>
+  <div>Make · Join · Play · Spin</div>
 </footer>
 
 <script>
