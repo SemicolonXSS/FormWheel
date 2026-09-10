@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="ko">
 <head>
@@ -120,22 +121,54 @@ nav a:hover{
 
 .gamesMenu{position:relative}
 .gamesMenu summary{
-  list-style:none;cursor:pointer;padding:9px 12px;border-radius:10px;
-  font-size:13px;font-weight:750;color:#666a73;transition:.18s ease;
+  list-style:none;
+  cursor:pointer;
+  padding:9px 12px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:750;
+  color:#666a73;
+  transition:.18s ease;
 }
 .gamesMenu summary::-webkit-details-marker{display:none}
-.gamesMenu summary:after{content:"⌄";margin-left:5px;font-size:10px}
-.gamesMenu[open] summary,.gamesMenu summary:hover{background:#f0f2f7;color:#111}
+.gamesMenu summary:after{
+  content:"⌄";
+  margin-left:5px;
+  font-size:10px;
+}
+.gamesMenu[open] summary,
+.gamesMenu summary:hover{
+  background:#f0f2f7;
+  color:#111;
+}
+
 .gamesDropdown{
-  position:absolute;top:calc(100% + 8px);right:0;min-width:155px;padding:7px;
-  background:rgba(255,255,255,.97);border:1px solid #e5e7ed;border-radius:14px;
-  box-shadow:0 14px 35px rgba(20,25,40,.12);backdrop-filter:blur(14px);
+  position:absolute;
+  top:calc(100% + 8px);
+  right:0;
+  min-width:155px;
+  padding:7px;
+  background:rgba(255,255,255,.97);
+  border:1px solid #e5e7ed;
+  border-radius:14px;
+  box-shadow:0 14px 35px rgba(20,25,40,.12);
+  backdrop-filter:blur(14px);
 }
+
 .gamesDropdown a{
-  display:block;padding:10px 11px;border-radius:9px;color:#666a73;
-  font-size:12px;font-weight:750;white-space:nowrap;
+  display:block;
+  padding:10px 11px;
+  border-radius:9px;
+  color:#666a73;
+  font-size:12px;
+  font-weight:750;
+  white-space:nowrap;
 }
-.gamesDropdown a:hover{background:#f0f2f7;color:#111}
+.gamesDropdown a:hover{
+  background:#f0f2f7;
+  color:#111;
+}
+
 nav a.navBattle{
   color:#ea650e;
   background:#fff5ed;
@@ -173,7 +206,11 @@ main{
   width:440px;
   height:220px;
   transform:translateX(-50%);
-  background:radial-gradient(ellipse,rgba(40,103,232,.13),transparent 70%);
+  background:radial-gradient(
+    ellipse,
+    rgba(40,103,232,.13),
+    transparent 70%
+  );
   filter:blur(4px);
   pointer-events:none;
   z-index:-1;
@@ -193,6 +230,7 @@ main{
   letter-spacing:.7px;
   margin-bottom:20px;
 }
+
 .badgeDot{
   width:6px;
   height:6px;
@@ -207,7 +245,12 @@ h1{
   line-height:1;
   letter-spacing:-4.5px;
   font-weight:900;
-  background:linear-gradient(120deg,#2867e8 0%,#15171c 45%,#7c3aed 100%);
+  background:linear-gradient(
+    120deg,
+    #2867e8 0%,
+    #15171c 45%,
+    #7c3aed 100%
+  );
   -webkit-background-clip:text;
   background-clip:text;
   color:transparent;
@@ -248,19 +291,23 @@ h1{
   font-weight:800;
   transition:.2s ease;
 }
+
 .heroBtn.primary{
   color:#fff;
   background:#15171c;
   box-shadow:0 10px 22px rgba(21,23,28,.14);
 }
+
 .heroBtn.secondary{
   color:#2867e8;
   background:#fff;
   border:1px solid #dfe5f2;
 }
+
 .heroBtn:hover{
   transform:translateY(-2px);
 }
+
 .heroBtn.primary:hover{
   box-shadow:0 14px 28px rgba(21,23,28,.18);
 }
@@ -271,10 +318,12 @@ h1{
   justify-content:space-between;
   margin:0 2px 14px;
 }
+
 .sectionLabel strong{
   font-size:14px;
   letter-spacing:-.2px;
 }
+
 .sectionLabel span{
   color:#9a9da5;
   font-size:12px;
@@ -295,8 +344,12 @@ h1{
   padding:28px;
   min-height:310px;
   box-shadow:0 12px 35px rgba(20,25,40,.045);
-  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease,
+    border-color .22s ease;
 }
+
 .card:before{
   content:"";
   position:absolute;
@@ -308,19 +361,58 @@ h1{
   background:var(--soft);
   pointer-events:none;
 }
+
 .card:hover{
   transform:translateY(-6px);
   box-shadow:0 20px 45px rgba(20,25,40,.09);
   border-color:#dce0e9;
 }
 
-.card.form{--accent:#15171c;--soft:rgba(21,23,28,.055)}
-.card.wheel{--accent:#2867e8;--soft:rgba(40,103,232,.10)}
-.card.quiz{--accent:#7c3aed;--soft:rgba(124,58,237,.10)}
-.card.battle{--accent:#f97316;--soft:rgba(249,115,22,.12)}
-.card.bomb{--accent:#dc2626;--soft:rgba(220,38,38,.10)}
-.card.bomb .status{color:#dc2626}
-.card.bomb .statusDot{background:#ef4444}
+.card.form{
+  --accent:#15171c;
+  --soft:rgba(21,23,28,.055);
+}
+
+.card.wheel{
+  --accent:#2867e8;
+  --soft:rgba(40,103,232,.10);
+}
+
+.card.quiz{
+  --accent:#7c3aed;
+  --soft:rgba(124,58,237,.10);
+}
+
+.card.battle{
+  --accent:#f97316;
+  --soft:rgba(249,115,22,.12);
+}
+
+.card.bomb{
+  --accent:#dc2626;
+  --soft:rgba(220,38,38,.10);
+}
+
+.card.risk{
+  --accent:#16a34a;
+  --soft:rgba(22,163,74,.11);
+}
+
+.card.bomb .status{
+  color:#dc2626;
+}
+
+.card.bomb .statusDot{
+  background:#ef4444;
+}
+
+.card.risk .status{
+  color:#16a34a;
+}
+
+.card.risk .statusDot{
+  background:#22c55e;
+}
 
 .icon{
   width:56px;
@@ -339,6 +431,7 @@ h1{
   font-size:25px;
   letter-spacing:-1.1px;
 }
+
 .card p{
   margin:0 0 25px;
   color:#70737b;
@@ -356,15 +449,18 @@ h1{
   font-size:10px;
   font-weight:750;
 }
+
 .statusDot{
   width:5px;
   height:5px;
   border-radius:50%;
   background:#b8bbc2;
 }
+
 .card.battle .status{
   color:#e56b18;
 }
+
 .card.battle .statusDot{
   background:#f97316;
 }
@@ -382,13 +478,27 @@ h1{
   font-size:13px;
   transition:.18s ease;
 }
+
 .btn:hover{
   transform:translateY(-1px);
   filter:brightness(1.05);
 }
-.btn.blue{background:#2867e8}
-.btn.purple{background:#7c3aed}
-.btn.orange{background:#f97316}
+
+.btn.blue{
+  background:#2867e8;
+}
+
+.btn.purple{
+  background:#7c3aed;
+}
+
+.btn.orange{
+  background:#f97316;
+}
+
+.btn.green{
+  background:#16a34a;
+}
 
 .notice{
   margin-top:18px;
@@ -407,21 +517,25 @@ h1{
   grid-template-columns:repeat(3,1fr);
   gap:14px;
 }
+
 .feature{
   background:rgba(255,255,255,.62);
   border:1px solid #e8e9ef;
   border-radius:18px;
   padding:20px;
 }
+
 .featureIcon{
   font-size:20px;
   margin-bottom:10px;
 }
+
 .feature strong{
   display:block;
   font-size:14px;
   margin-bottom:6px;
 }
+
 .feature span{
   color:#777b83;
   font-size:12px;
@@ -438,11 +552,13 @@ h1{
   text-align:center;
   box-shadow:0 15px 40px rgba(20,25,40,.05);
 }
+
 .formBox h2{
   margin:0 0 12px;
   font-size:30px;
   letter-spacing:-1px;
 }
+
 .formBox p{
   color:#777b83;
   line-height:1.7;
@@ -460,7 +576,10 @@ h1{
   padding:8px 10px;
   border-radius:9px;
 }
-.back:hover{background:#eef0f5}
+
+.back:hover{
+  background:#eef0f5;
+}
 
 footer{
   text-align:center;
@@ -468,6 +587,7 @@ footer{
   color:#a4a7ae;
   font-size:11px;
 }
+
 .footerLogo{
   font-weight:800;
   color:#777b83;
@@ -487,45 +607,63 @@ footer{
     padding:10px 14px;
     gap:8px;
   }
-  .logo{font-size:18px}
+
+  .logo{
+    font-size:18px;
+  }
+
   .logoIcon{
     width:24px;
     height:24px;
     border-width:3px;
   }
+
   nav{
     gap:1px;
     overflow-x:auto;
     scrollbar-width:none;
   }
-  nav::-webkit-scrollbar{display:none}
+
+  nav::-webkit-scrollbar{
+    display:none;
+  }
+
   nav a{
     padding:8px 6px;
     font-size:10px;
     white-space:nowrap;
   }
+
   .gamesMenu summary{
     padding:8px 6px;
     font-size:10px;
     white-space:nowrap;
   }
-  .construction{font-size:8px}
+
+  .construction{
+    font-size:8px;
+  }
 
   main{
     padding:42px 16px 55px;
   }
+
   .hero{
     padding:15px 0 44px;
   }
+
   .heroGlow{
     width:330px;
   }
+
   h1{
     letter-spacing:-3px;
   }
+
   .heroTitle{
     letter-spacing:-1.4px;
   }
+
   .heroText{
     font-size:14px;
   }
@@ -534,10 +672,12 @@ footer{
     grid-template-columns:1fr;
     gap:13px;
   }
+
   .card{
     min-height:auto;
     padding:24px;
   }
+
   .card p{
     min-height:auto;
   }
@@ -561,17 +701,21 @@ footer{
   header{
     flex-wrap:wrap;
   }
+
   nav{
     width:100%;
     justify-content:space-between;
   }
+
   nav a{
     flex:1;
     text-align:center;
   }
+
   .heroActions{
     flex-direction:column;
   }
+
   .heroBtn{
     width:100%;
   }
@@ -582,37 +726,67 @@ footer{
 <body>
 
 <header>
-  <a href="#" class="logo" onclick="showPage('home');return false;" aria-label="FormWheel Home">
+
+  <a href="#" class="logo"
+     onclick="showPage('home');return false;"
+     aria-label="FormWheel Home">
     <span class="form">Form</span>
     <span class="logoIcon"></span>
     <span class="wheel">Wheel</span>
   </a>
 
   <nav>
-    <a href="#" onclick="showPage('home');return false;">Home</a>
 
-    <a href="#" onclick="showPage('form');return false;">
-      Form<span class="construction">제작중</span>
+    <a href="#"
+       onclick="showPage('home');return false;">
+      Home
+    </a>
+
+    <a href="#"
+       onclick="showPage('form');return false;">
+      Form
     </a>
 
     <a href="https://semicolonxss.github.io/Formwheel_Wheel/"
-       target="_blank" rel="noopener">
+       target="_blank"
+       rel="noopener">
       Wheel
     </a>
 
     <a href="https://semicolonxss.github.io/Formwheel_Quiz"
-       target="_blank" rel="noopener">
+       target="_blank"
+       rel="noopener">
       Quiz
     </a>
 
     <details class="gamesMenu">
       <summary>Games</summary>
+
       <div class="gamesDropdown">
-        <a href="https://semicolonxss.github.io/Formwheel_Battle" target="_blank" rel="noopener">⚔️ Battle</a>
-        <a href="https://semicolonxss.github.io/Formwheel_Bomb/" target="_blank" rel="noopener">💣 Bomb</a>
+
+        <a href="https://semicolonxss.github.io/Formwheel_Battle"
+           target="_blank"
+           rel="noopener">
+          ⚔️ Battle
+        </a>
+
+        <a href="https://semicolonxss.github.io/Formwheel_Bomb/"
+           target="_blank"
+           rel="noopener">
+          💣 Bomb
+        </a>
+
+        <a href="https://semicolonxss.github.io/Formwheel_Risk/"
+           target="_blank"
+           rel="noopener">
+          🎲 Risk
+        </a>
+
       </div>
     </details>
+
   </nav>
+
 </header>
 
 <main>
@@ -621,6 +795,7 @@ footer{
   <section id="home" class="page active">
 
     <div class="hero">
+
       <div class="heroGlow"></div>
 
       <div class="badge">
@@ -641,16 +816,23 @@ footer{
       </p>
 
       <div class="heroActions">
+
         <a href="https://semicolonxss.github.io/Formwheel_Form"
-           target="_blank" rel="noopener" class="heroBtn primary">
+           target="_blank"
+           rel="noopener"
+           class="heroBtn primary">
           📝 Form 시작하기
         </a>
 
         <a href="https://semicolonxss.github.io/Formwheel_Wheel/"
-           target="_blank" rel="noopener" class="heroBtn secondary">
+           target="_blank"
+           rel="noopener"
+           class="heroBtn secondary">
           🎡 Wheel 시작하기
         </a>
+
       </div>
+
     </div>
 
     <div class="sectionLabel">
@@ -660,106 +842,211 @@ footer{
 
     <div class="cards">
 
+      <!-- FORM -->
       <div class="card form">
+
         <div class="icon">📝</div>
-        <div class="status"><span class="statusDot"></span> Beta testing</div>
+
+        <div class="status">
+          <span class="statusDot"></span>
+          Available
+        </div>
+
         <h2>Form</h2>
+
         <p>
           설문을 만들고 공유 링크를 통해
           다른 사람의 응답을 받아보세요.
         </p>
 
         <a href="https://semicolonxss.github.io/Formwheel_Form"
-           target="_blank" rel="noopener" class="btn">
-          Beta testing →
+           target="_blank"
+           rel="noopener"
+           class="btn">
+          Form으로 이동 →
         </a>
+
       </div>
 
+      <!-- WHEEL -->
       <div class="card wheel">
+
         <div class="icon">🎡</div>
-        <div class="status"><span class="statusDot"></span> Available</div>
+
+        <div class="status">
+          <span class="statusDot"></span>
+          Available
+        </div>
+
         <h2>Wheel</h2>
+
         <p>
           설문 응답을 이용해서
           간편하게 랜덤 추첨을 진행하세요.
         </p>
 
         <a href="https://semicolonxss.github.io/Formwheel_Wheel/"
-           target="_blank" rel="noopener" class="btn blue">
+           target="_blank"
+           rel="noopener"
+           class="btn blue">
           Wheel로 이동 →
         </a>
+
       </div>
 
+      <!-- QUIZ -->
       <div class="card quiz">
+
         <div class="icon">🧠</div>
-        <div class="status"><span class="statusDot"></span> Available</div>
+
+        <div class="status">
+          <span class="statusDot"></span>
+          Available
+        </div>
+
         <h2>Quiz</h2>
+
         <p>
           실시간으로 참가자들과
           함께 즐기는 퀴즈를 진행하세요.
         </p>
 
         <a href="https://semicolonxss.github.io/Formwheel_Quiz"
-           target="_blank" rel="noopener" class="btn purple">
+           target="_blank"
+           rel="noopener"
+           class="btn purple">
           Quiz로 이동 →
         </a>
+
       </div>
 
+      <!-- BATTLE -->
       <div class="card battle">
+
         <div class="icon">⚔️</div>
-        <div class="status"><span class="statusDot"></span> New experience</div>
+
+        <div class="status">
+          <span class="statusDot"></span>
+          New experience
+        </div>
+
         <h2>Battle</h2>
+
         <p>
           참가자들과 실시간으로 대결하며
           재미있는 배틀을 진행하세요.
         </p>
 
         <a href="https://semicolonxss.github.io/Formwheel_Battle"
-           target="_blank" rel="noopener" class="btn orange">
+           target="_blank"
+           rel="noopener"
+           class="btn orange">
           Battle로 이동 →
         </a>
+
       </div>
 
+      <!-- BOMB -->
       <div class="card bomb">
+
         <div class="icon">💣</div>
-        <div class="status"><span class="statusDot"></span> New game</div>
+
+        <div class="status">
+          <span class="statusDot"></span>
+          New game
+        </div>
+
         <h2>Bomb</h2>
+
         <p>
           폭탄을 다른 참가자에게 넘기며
           마지막까지 살아남아보세요.
         </p>
 
         <a href="https://semicolonxss.github.io/Formwheel_Bomb/"
-           target="_blank" rel="noopener" class="btn orange">
+           target="_blank"
+           rel="noopener"
+           class="btn orange">
           Bomb로 이동 →
         </a>
+
+      </div>
+
+      <!-- RISK -->
+      <div class="card risk">
+
+        <div class="icon">🎲</div>
+
+        <div class="status">
+          <span class="statusDot"></span>
+          New game
+        </div>
+
+        <h2>Risk</h2>
+
+        <p>
+          위험을 감수하고 선택하며
+          마지막까지 살아남아보세요.
+        </p>
+
+        <a href="https://semicolonxss.github.io/Formwheel_Risk/"
+           target="_blank"
+           rel="noopener"
+           class="btn green">
+          Risk로 이동 →
+        </a>
+
       </div>
 
     </div>
 
     <div class="notice">
       🎡 Wheel은 FormWheel의 랜덤 추첨 기능을 제공합니다.
-      &nbsp;·&nbsp; 🎮 Games에서 Battle과 Bomb를 친구들과 함께 즐겨보세요.
+      &nbsp;·&nbsp;
+      🎮 Games에서 Battle, Bomb, Risk를 친구들과 함께 즐겨보세요.
     </div>
 
     <div class="features">
+
       <div class="feature">
+
         <div class="featureIcon">🔗</div>
+
         <strong>간편한 공유</strong>
-        <span>링크 하나로 친구들과 Form, Quiz, Battle, Bomb를 공유할 수 있어요.</span>
+
+        <span>
+          링크 하나로 친구들과 Form, Quiz,
+          Battle, Bomb, Risk를 공유할 수 있어요.
+        </span>
+
       </div>
 
       <div class="feature">
+
         <div class="featureIcon">⚡</div>
+
         <strong>빠르게 시작</strong>
-        <span>복잡한 과정 없이 원하는 기능을 골라 바로 시작할 수 있어요.</span>
+
+        <span>
+          복잡한 과정 없이 원하는 기능을 골라
+          바로 시작할 수 있어요.
+        </span>
+
       </div>
 
       <div class="feature">
+
         <div class="featureIcon">🎮</div>
+
         <strong>함께 즐기기</strong>
-        <span>설문뿐 아니라 퀴즈와 배틀까지 다양한 방식으로 참여해보세요.</span>
+
+        <span>
+          설문뿐 아니라 퀴즈와 다양한 게임까지
+          여러 방식으로 참여해보세요.
+        </span>
+
       </div>
+
     </div>
 
   </section>
@@ -767,26 +1054,30 @@ footer{
   <!-- FORM -->
   <section id="form" class="page">
 
-    <a href="#" class="back"
+    <a href="#"
+       class="back"
        onclick="showPage('home');return false;">
       ← Home
     </a>
 
     <div class="formBox">
 
-      <div class="icon" style="margin:0 auto 20px;background:rgba(21,23,28,.055)">📝</div>
+      <div class="icon"
+           style="margin:0 auto 20px;background:rgba(21,23,28,.055)">
+        📝
+      </div>
 
       <h2>Form</h2>
 
       <p>
         설문을 만들고 사람들의 응답을 받아보세요.
-        <br><br>
-        현재 베타 테스트 중입니다.
       </p>
 
       <a href="https://semicolonxss.github.io/Formwheel_Form"
-         target="_blank" rel="noopener" class="btn">
-        Beta testing →
+         target="_blank"
+         rel="noopener"
+         class="btn">
+        Form으로 이동 →
       </a>
 
     </div>
@@ -796,12 +1087,20 @@ footer{
 </main>
 
 <footer>
-  <div class="footerLogo">FormWheel</div>
-  <div>Make · Join · Play · Spin</div>
+
+  <div class="footerLogo">
+    FormWheel
+  </div>
+
+  <div>
+    Make · Join · Play · Spin
+  </div>
+
 </footer>
 
 <script>
 function showPage(page){
+
   document.querySelectorAll('.page').forEach(function(el){
     el.classList.remove('active');
   });
@@ -821,3 +1120,4 @@ function showPage(page){
 
 </body>
 </html>
+```
